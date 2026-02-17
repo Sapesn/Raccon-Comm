@@ -1,25 +1,130 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { USERS } from '../members/data'
-import { RACCOON_LEVELS, RACCOON_DATA, SCENES, getRaccoonLevel } from './data'
+import { RACCOON_LEVELS, RACCOON_DATA, SCENES, getRaccoonLevel, type RaccoonPersonality } from './data'
+
+// Random moving raccoon component
+function MovingRaccoon({
+  user,
+  rData,
+  lv,
+  onClick,
+  isSelected
+}: {
+  user: (typeof USERS)[number]
+  rData: RaccoonPersonality
+  lv: ReturnType<typeof getRaccoonLevel>
+  onClick: () => void
+  isSelected: boolean
+}) {
+  const [position, setPosition] = useState({ x: 0, y: 0 })
+  const timeoutRef = useRef<NodeJS.Timeout>()
+
+  useEffect(() => {
+    // Initialize with a consistent random position based on user ID
+    const seed = parseInt(user.id) || 1
+    const initialX = ((seed * 137.5) % 85) + 5 // 5-90% range
+    const initialY = ((seed * 222.5) % 75) + 10 // 10-85% range
+    setPosition({ x: initialX, y: initialY })
+
+    // Move to new random position every 10-20 seconds
+    const moveRaccoon = () => {
+      const newX = 5 + Math.random() * 85 // 5-90%
+      const newY = 10 + Math.random() * 75 // 10-85%
+      setPosition({ x: newX, y: newY })
+
+      const nextDelay = 10000 + Math.random() * 10000 // 10-20 seconds
+      timeoutRef.current = setTimeout(moveRaccoon, nextDelay)
+    }
+
+    // Start movement after initial random delay
+    const initialDelay = 5000 + Math.random() * 10000 // 5-15 seconds
+    timeoutRef.current = setTimeout(moveRaccoon, initialDelay)
+
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    }
+  }, [user.id])
+
+  return (
+    <button
+      onClick={onClick}
+      className={`absolute cursor-pointer transition-all duration-[8000ms] ease-in-out hover:scale-125 hover:z-20 ${
+        isSelected ? 'scale-125 z-20' : 'hover:z-10'
+      }`}
+      style={{
+        left: `${position.x}%`,
+        top: `${position.y}%`,
+        transform: isSelected ? 'scale(1.25)' : 'scale(1)',
+      }}
+      title={`${rData.name} (${user.name})`}
+    >
+      <div className="relative group">
+        {/* Raccoon Image or Emoji */}
+        {rData.imageUrl ? (
+          <div className="relative">
+            <img
+              src={rData.imageUrl}
+              alt={rData.name}
+              className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-4 ${isSelected ? 'ring-4 ' + lv.ring : 'border-white'} shadow-lg transition-all`}
+            />
+            {lv.accessory && (
+              <span className="absolute -top-1 -right-1 text-xl">{lv.accessory}</span>
+            )}
+            <span className="absolute -bottom-1 -right-1 text-base bg-white rounded-full w-6 h-6 flex items-center justify-center shadow-sm">{rData.mood}</span>
+          </div>
+        ) : (
+          <div className="relative">
+            <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br ${lv.aura} flex items-center justify-center text-3xl sm:text-4xl shadow-lg border-2 ${isSelected ? 'ring-4 ' + lv.ring : 'border-white'} transition-all`}>
+              {lv.emoji}
+            </div>
+            {lv.accessory && (
+              <span className="absolute -top-1 -right-1 text-xl">{lv.accessory}</span>
+            )}
+            <span className="absolute -bottom-1 -right-1 text-base">{rData.mood}</span>
+          </div>
+        )}
+
+        {/* Hover label */}
+        <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+          <div className="bg-black/80 text-white text-xs px-2 py-1 rounded-lg">
+            {rData.name}
+          </div>
+        </div>
+      </div>
+    </button>
+  )
+}
 
 export default function RaccoonPlazaPage() {
   const [scene, setScene] = useState(SCENES[0])
   const [selected, setSelected] = useState<string | null>(null)
   const [nameInput, setNameInput] = useState('')
   const [myRaccoonName, setMyRaccoonName] = useState('小浣熊')
+  const [myRaccoonImage, setMyRaccoonImage] = useState<string>('')
   const [editingName, setEditingName] = useState(false)
+  const [generatingImage, setGeneratingImage] = useState(false)
 
   // My raccoon (mock current user: 12400 points → Lv.5)
   const myPoints = 12400
   const myLevel = getRaccoonLevel(myPoints)
   const isNight = scene.id === 'night'
 
+  // Mock AI image generation
+  const handleGenerateImage = async () => {
+    setGeneratingImage(true)
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    // Mock generated image URL
+    setMyRaccoonImage(`https://api.dicebear.com/7.x/bottts/svg?seed=${myRaccoonName}&backgroundColor=b6e3f4`)
+    setGeneratingImage(false)
+  }
+
   return (
     <div className={`min-h-[calc(100vh-56px)] bg-gradient-to-b ${scene.bg} transition-all duration-700`}>
-      <div className="container mx-auto px-4 py-6 max-w-6xl">
+      <div className="container mx-auto px-4 py-6 max-w-7xl">
 
         {/* Header */}
         <div className="flex items-start justify-between mb-6 flex-wrap gap-3">
@@ -28,7 +133,7 @@ export default function RaccoonPlazaPage() {
               🦝 浣熊园
             </h1>
             <p className={`text-sm ${isNight ? 'text-slate-300' : 'text-gray-500'}`}>
-              每一只浣熊都是一位 AI 实践者的化身，快来认识它们！
+              每一只浣熊都是一位 AI 实践者的化身，它们在园子里自由漫步～
             </p>
           </div>
           {/* Scene switcher */}
@@ -55,12 +160,25 @@ export default function RaccoonPlazaPage() {
           <div className="lg:col-span-1 space-y-4">
             <div className={`rounded-2xl border overflow-hidden shadow-sm ${isNight ? 'bg-slate-800 border-slate-700' : 'bg-white'}`}>
               <div className={`bg-gradient-to-br ${myLevel.aura} p-5 text-center relative`}>
-                <div className="text-6xl mb-1 relative inline-block">
-                  {myLevel.emoji}
-                  {myLevel.accessory && (
-                    <span className="absolute -top-2 -right-2 text-2xl">{myLevel.accessory}</span>
-                  )}
-                </div>
+                {myRaccoonImage ? (
+                  <div className="relative inline-block">
+                    <img
+                      src={myRaccoonImage}
+                      alt={myRaccoonName}
+                      className="w-24 h-24 rounded-2xl object-cover mx-auto mb-2 shadow-md"
+                    />
+                    {myLevel.accessory && (
+                      <span className="absolute -top-1 -right-1 text-2xl">{myLevel.accessory}</span>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-6xl mb-1 relative inline-block">
+                    {myLevel.emoji}
+                    {myLevel.accessory && (
+                      <span className="absolute -top-2 -right-2 text-2xl">{myLevel.accessory}</span>
+                    )}
+                  </div>
+                )}
                 <div className={`text-xs font-bold mt-1 ${myLevel.level === 6 ? 'text-amber-600' : myLevel.level === 5 ? 'text-violet-600' : 'text-gray-600'}`}>
                   {myLevel.name} {myLevel.form}
                 </div>
@@ -89,9 +207,25 @@ export default function RaccoonPlazaPage() {
                   </button>
                 </div>
                 <p className={`text-xs mb-3 ${isNight ? 'text-slate-400' : 'text-gray-500'}`}>{myLevel.desc}</p>
-                <div className={`text-xs font-medium rounded-lg px-3 py-2 ${isNight ? 'bg-slate-700 text-slate-300' : 'bg-gray-50 text-gray-600'}`}>
+                <div className={`text-xs font-medium rounded-lg px-3 py-2 mb-3 ${isNight ? 'bg-slate-700 text-slate-300' : 'bg-gray-50 text-gray-600'}`}>
                   {myLevel.ability}
                 </div>
+
+                {/* AI Generate Button */}
+                <button
+                  onClick={handleGenerateImage}
+                  disabled={generatingImage}
+                  className={`w-full py-2 rounded-lg text-xs font-medium transition-colors mb-3 ${
+                    generatingImage
+                      ? 'bg-gray-200 text-gray-400 cursor-wait'
+                      : myRaccoonImage
+                      ? 'bg-green-50 text-green-700 border border-green-200 hover:bg-green-100'
+                      : 'bg-blue-500 text-white hover:bg-blue-600'
+                  }`}
+                >
+                  {generatingImage ? '🎨 AI 生成中...' : myRaccoonImage ? '✨ 重新生成形象' : '🎨 AI 生成形象'}
+                </button>
+
                 {/* Points progress */}
                 <div className="mt-3">
                   <div className="flex justify-between text-xs mb-1">
@@ -144,7 +278,7 @@ export default function RaccoonPlazaPage() {
             </div>
           </div>
 
-          {/* Plaza - raccoon grid */}
+          {/* Plaza - free roaming raccoons */}
           <div className="lg:col-span-3">
             {/* Ground scene */}
             <div className={`rounded-2xl overflow-hidden border shadow-sm ${isNight ? 'border-slate-700' : 'border-white/60'}`}>
@@ -154,40 +288,23 @@ export default function RaccoonPlazaPage() {
                   {isNight ? '🌟'.repeat(8) : '☁️ ☁️ ☁️'}
                 </div>
               </div>
-              {/* Ground */}
-              <div className={`${scene.ground} p-5`}>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                  {USERS.filter(u => u.identity !== 'official').map((user) => {
-                    const lv = getRaccoonLevel(user.points)
-                    const rData = RACCOON_DATA[user.id] ?? { name: `浣熊${user.id}`, mood: '🦝', catchphrase: '正在探索 AI 中...' }
-                    const isSelected = selected === user.id
-                    return (
-                      <button
-                        key={user.id}
-                        onClick={() => setSelected(isSelected ? null : user.id)}
-                        className={`rounded-xl p-3 text-center transition-all hover:scale-105 ${
-                          isSelected
-                            ? 'bg-white shadow-lg ring-2 ' + lv.ring + ' scale-105'
-                            : 'bg-white/70 hover:bg-white/90 hover:shadow-md'
-                        }`}
-                      >
-                        {/* Raccoon */}
-                        <div className={`relative inline-block mb-2`}>
-                          <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${lv.aura} flex items-center justify-center text-2xl`}>
-                            {lv.emoji}
-                          </div>
-                          {lv.accessory && (
-                            <span className="absolute -top-1 -right-1 text-base">{lv.accessory}</span>
-                          )}
-                          <span className="absolute -bottom-1 -right-1 text-sm">{rData.mood}</span>
-                        </div>
-                        <div className="text-xs font-bold text-gray-900 truncate">{rData.name}</div>
-                        <div className="text-xs text-gray-500 truncate">{user.name}</div>
-                        <div className="text-xs text-gray-400">{lv.name}</div>
-                      </button>
-                    )
-                  })}
-                </div>
+              {/* Ground - absolute positioned raccoons */}
+              <div className={`${scene.ground} relative overflow-hidden`} style={{ minHeight: '500px', height: '60vh' }}>
+                {USERS.filter(u => u.identity !== 'official').map((user) => {
+                  const lv = getRaccoonLevel(user.points)
+                  const rData = RACCOON_DATA[user.id] ?? { name: `浣熊${user.id}`, mood: '🦝', catchphrase: '正在探索 AI 中...' }
+                  const isSelected = selected === user.id
+                  return (
+                    <MovingRaccoon
+                      key={user.id}
+                      user={user}
+                      rData={rData}
+                      lv={lv}
+                      onClick={() => setSelected(isSelected ? null : user.id)}
+                      isSelected={isSelected}
+                    />
+                  )
+                })}
               </div>
             </div>
 
@@ -199,10 +316,18 @@ export default function RaccoonPlazaPage() {
               return (
                 <div className={`mt-4 rounded-2xl border p-5 transition-all ${isNight ? 'bg-slate-800 border-slate-700' : 'bg-white shadow-sm'}`}>
                   <div className="flex items-start gap-4">
-                    <div className={`relative w-16 h-16 rounded-2xl bg-gradient-to-br ${lv.aura} flex items-center justify-center text-3xl flex-shrink-0`}>
-                      {lv.emoji}
-                      {lv.accessory && <span className="absolute -top-1.5 -right-1.5 text-xl">{lv.accessory}</span>}
-                    </div>
+                    {rData.imageUrl ? (
+                      <img
+                        src={rData.imageUrl}
+                        alt={rData.name}
+                        className="w-16 h-16 rounded-2xl object-cover flex-shrink-0 shadow-md"
+                      />
+                    ) : (
+                      <div className={`relative w-16 h-16 rounded-2xl bg-gradient-to-br ${lv.aura} flex items-center justify-center text-3xl flex-shrink-0`}>
+                        {lv.emoji}
+                        {lv.accessory && <span className="absolute -top-1.5 -right-1.5 text-xl">{lv.accessory}</span>}
+                      </div>
+                    )}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap mb-1">
                         <h3 className={`font-bold text-lg ${isNight ? 'text-white' : 'text-gray-900'}`}>{rData.name}</h3>

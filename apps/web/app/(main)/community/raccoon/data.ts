@@ -97,7 +97,14 @@ export function getRaccoonLevel(points: number): RaccoonLevel {
   return [...RACCOON_LEVELS].reverse().find((l) => points >= l.minPoints) ?? RACCOON_LEVELS[0]
 }
 
-export const RACCOON_DATA: Record<string, { name: string; mood: string; catchphrase: string }> = {
+export interface RaccoonPersonality {
+  name: string
+  mood: string
+  catchphrase: string
+  imageUrl?: string  // AI generated raccoon image
+}
+
+export const RACCOON_DATA: Record<string, RaccoonPersonality> = {
   '1':  { name: '橙子',   mood: '🎯', catchphrase: '用 AI 征服每一个大促！' },
   '2':  { name: '提示词', mood: '💡', catchphrase: 'Prompt 就是一切～' },
   '3':  { name: '判官',   mood: '⚖️', catchphrase: '合同风险，我来把关' },
