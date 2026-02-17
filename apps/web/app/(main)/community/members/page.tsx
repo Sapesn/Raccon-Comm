@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { USERS, IDENTITY_MAP, SOCIAL_META, canPublishSocials, type Identity } from './data'
+import { USERS, IDENTITY_MAP, SOCIAL_META, INDUSTRY_CIRCLES, ROLE_META, canPublishSocials, type Identity } from './data'
 
 const DIMENSIONS = [
   { key: 'points', label: '积分榜', icon: '⭐' },
@@ -87,6 +87,24 @@ export default function MembersPage() {
             共 <strong className="text-gray-900">{filtered.length}</strong> 位认证用户
           </div>
 
+          {/* Industry Circle Banner */}
+          {industryFilter !== '全部' && INDUSTRY_CIRCLES[industryFilter] && (() => {
+            const c = INDUSTRY_CIRCLES[industryFilter]
+            return (
+              <Link
+                href={`/community/industry/${encodeURIComponent(industryFilter)}`}
+                className={`flex items-center gap-4 bg-gradient-to-r ${c.gradient} rounded-xl p-4 mb-5 text-white hover:opacity-95 transition-opacity group`}
+              >
+                <span className="text-3xl">{c.icon}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm">{industryFilter} AI 实践圈</p>
+                  <p className="text-xs text-white/75 truncate">{c.memberCount.toLocaleString()} 位成员 · {c.caseCount} 个案例 · 含主理人 & 布道师</p>
+                </div>
+                <span className="text-white/80 group-hover:text-white transition-colors font-bold">进入圈子 →</span>
+              </Link>
+            )
+          })()}
+
           {/* User Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {filtered.map((user) => {
@@ -108,6 +126,14 @@ export default function MembersPage() {
                           <span className={`text-xs px-2 py-0.5 rounded-full font-medium border ${id.bg} ${id.color}`}>
                             {id.icon} {id.label}
                           </span>
+                          {user.industryRole && (() => {
+                            const role = ROLE_META[user.industryRole]
+                            return (
+                              <span className={`text-xs px-2 py-0.5 rounded-full font-medium border ${role.bg} ${role.color}`}>
+                                {role.icon} {role.label}
+                              </span>
+                            )
+                          })()}
                           <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{user.industry}</span>
                         </div>
                         <Link href={`/community/members/${user.id}`}>
@@ -274,6 +300,27 @@ export default function MembersPage() {
               <li>• 粉丝 10000+ → 行业大 V</li>
               <li>• 申请入口：个人中心 → 认证申请</li>
             </ul>
+          </div>
+
+          {/* Industry Circles */}
+          <div className="bg-white rounded-xl p-4 shadow-sm border">
+            <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+              <span>🌐</span> 行业圈子
+            </h3>
+            <div className="space-y-1.5">
+              {Object.entries(INDUSTRY_CIRCLES).map(([ind, c]) => (
+                <Link
+                  key={ind}
+                  href={`/community/industry/${encodeURIComponent(ind)}`}
+                  className="flex items-center gap-2 text-sm text-gray-600 hover:text-blue-600 py-1.5 px-2 rounded-lg hover:bg-blue-50 transition-colors"
+                >
+                  <span>{c.icon}</span>
+                  <span className="flex-1">{ind}圈</span>
+                  <span className="text-xs text-gray-400">{c.memberCount.toLocaleString()}人</span>
+                  <span className="text-gray-300">→</span>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { use } from 'react'
-import { USERS, IDENTITY_MAP, SOCIAL_META, canPublishSocials } from '../data'
+import { USERS, IDENTITY_MAP, SOCIAL_META, INDUSTRY_CIRCLES, ROLE_META, canPublishSocials } from '../data'
 
 export default function UserProfilePage({ params }: { params: Promise<{ userId: string }> }) {
   const { userId } = use(params)
@@ -54,11 +54,22 @@ function ProfileContent({ userId }: { userId: string }) {
             </div>
 
             <div className="px-5 pt-10 pb-5">
-              {/* Identity badge */}
-              <div className="mb-2">
+              {/* Identity badge + role badge */}
+              <div className="flex flex-wrap gap-1.5 mb-2">
                 <span className={`text-xs px-2 py-0.5 rounded-full font-medium border ${id.bg} ${id.color}`}>
                   {id.icon} {id.label}
                 </span>
+                {user.industryRole && (() => {
+                  const role = ROLE_META[user.industryRole]
+                  return (
+                    <Link
+                      href={`/community/industry/${encodeURIComponent(user.industry)}`}
+                      className={`text-xs px-2 py-0.5 rounded-full font-medium border ${role.bg} ${role.color} hover:opacity-80 transition-opacity`}
+                    >
+                      {role.icon} {user.industry}{role.label}
+                    </Link>
+                  )
+                })()}
               </div>
 
               <h1 className="text-xl font-black text-gray-900 mb-0.5">{user.name}</h1>
@@ -68,7 +79,14 @@ function ProfileContent({ userId }: { userId: string }) {
               <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-400 mb-4">
                 <span>📍 {user.location}</span>
                 <span>🗓️ 加入于 {user.joinedAt}</span>
-                <span>🏭 {user.industry}</span>
+                {INDUSTRY_CIRCLES[user.industry] ? (
+                  <Link href={`/community/industry/${encodeURIComponent(user.industry)}`} className="flex items-center gap-1 hover:text-blue-500 transition-colors">
+                    <span>{INDUSTRY_CIRCLES[user.industry].icon}</span>
+                    <span>{user.industry}圈</span>
+                  </Link>
+                ) : (
+                  <span>🏭 {user.industry}</span>
+                )}
               </div>
 
               {/* Stats */}
@@ -150,6 +168,24 @@ function ProfileContent({ userId }: { userId: string }) {
               ))}
             </div>
           </div>
+
+          {/* Industry Circle */}
+          {INDUSTRY_CIRCLES[user.industry] && (() => {
+            const circle = INDUSTRY_CIRCLES[user.industry]
+            return (
+              <Link
+                href={`/community/industry/${encodeURIComponent(user.industry)}`}
+                className={`block bg-gradient-to-br ${circle.gradient} rounded-2xl p-4 text-white hover:opacity-95 transition-opacity`}
+              >
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className="text-xl">{circle.icon}</span>
+                  <h3 className="font-semibold text-sm">{user.industry}行业圈子</h3>
+                </div>
+                <p className="text-xs text-white/75 mb-2 line-clamp-2">{circle.desc}</p>
+                <p className="text-xs text-white/90 font-medium">👥 {circle.memberCount.toLocaleString()} 位成员 · 进入圈子 →</p>
+              </Link>
+            )
+          })()}
         </div>
 
         {/* Right: Content */}
