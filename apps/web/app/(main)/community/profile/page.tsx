@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { SOCIAL_META, canPublishSocials, type SocialPlatform } from '../members/data'
 
 const MY_CASES = [
   {
@@ -175,8 +176,39 @@ const totalPoints = POINTS_HISTORY.reduce((sum, h) => sum + h.points, 0)
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState('overview')
   const [checkedIn, setCheckedIn] = useState(false)
+  const [editOpen, setEditOpen] = useState(false)
+  const [editTab, setEditTab] = useState<'basic' | 'social'>('basic')
+
+  // Demo: current user identity (优秀创作者 cannot publish socials publicly)
+  const currentIdentity = 'contributor'
+  const canShowSocials = canPublishSocials(currentIdentity)
+
+  const [profile, setProfile] = useState({
+    name: 'Asui',
+    title: '产品经理 · 社区用户',
+    bio: '热爱 AI 工具，专注于电商和互联网行业的 AI 应用落地实践。',
+    location: '上海',
+    industry: '电商',
+  })
+
+  const [socials, setSocials] = useState<{ platform: SocialPlatform; handle: string; enabled: boolean }[]>([
+    { platform: 'weibo', handle: '', enabled: false },
+    { platform: 'wechat', handle: '', enabled: false },
+    { platform: 'twitter', handle: '', enabled: false },
+    { platform: 'linkedin', handle: '', enabled: false },
+    { platform: 'github', handle: '', enabled: false },
+    { platform: 'xiaohongshu', handle: '', enabled: false },
+  ])
+  const [socialPublic, setSocialPublic] = useState(false)
+
+  const [saved, setSaved] = useState(false)
+  const handleSave = () => {
+    setSaved(true)
+    setTimeout(() => { setSaved(false); setEditOpen(false) }, 1200)
+  }
 
   return (
+    <>
     <div className="container mx-auto px-4 py-6 max-w-5xl">
       {/* Profile Header */}
       <div className="bg-white rounded-2xl shadow-sm border overflow-hidden mb-5">
@@ -204,7 +236,7 @@ export default function ProfilePage() {
               >
                 {checkedIn ? '✅ 已签到' : '📅 签到 +5'}
               </button>
-              <button className="text-sm px-4 py-1.5 rounded-full border text-gray-600 hover:bg-gray-50 transition-colors">
+              <button className="text-sm px-4 py-1.5 rounded-full border text-gray-600 hover:bg-gray-50 transition-colors" onClick={() => setEditOpen(true)}>
                 编辑资料
               </button>
             </div>
@@ -578,5 +610,178 @@ export default function ProfilePage() {
         </div>
       </div>
     </div>
+
+    {/* Edit Profile Modal */}
+    {editOpen && (
+      <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+        {/* Backdrop */}
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setEditOpen(false)} />
+
+        {/* Panel */}
+        <div className="relative w-full sm:max-w-xl bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+          {/* Header */}
+          <div className="flex items-center justify-between px-5 py-4 border-b flex-shrink-0">
+            <h2 className="font-bold text-gray-900 text-base">编辑资料</h2>
+            <button onClick={() => setEditOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 transition-colors">✕</button>
+          </div>
+
+          {/* Tabs */}
+          <div className="flex border-b px-5 flex-shrink-0">
+            {(['basic', 'social'] as const).map((t) => (
+              <button
+                key={t}
+                onClick={() => setEditTab(t)}
+                className={`py-2.5 mr-5 text-sm font-medium border-b-2 transition-colors ${editTab === t ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-800'}`}
+              >
+                {t === 'basic' ? '基本信息' : '社交账号'}
+              </button>
+            ))}
+          </div>
+
+          {/* Body */}
+          <div className="flex-1 overflow-y-auto px-5 py-5 space-y-4">
+            {editTab === 'basic' && (
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">昵称</label>
+                  <input
+                    value={profile.name}
+                    onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                    className="w-full border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    placeholder="你的昵称"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">职位 / 头衔</label>
+                  <input
+                    value={profile.title}
+                    onChange={(e) => setProfile({ ...profile, title: e.target.value })}
+                    className="w-full border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    placeholder="如：产品经理 · 电商行业"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">个人简介</label>
+                  <textarea
+                    value={profile.bio}
+                    onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
+                    rows={3}
+                    className="w-full border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 resize-none"
+                    placeholder="简单介绍一下自己..."
+                  />
+                  <p className="text-xs text-gray-400 mt-1 text-right">{profile.bio.length} / 200</p>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">所在地</label>
+                    <input
+                      value={profile.location}
+                      onChange={(e) => setProfile({ ...profile, location: e.target.value })}
+                      className="w-full border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+                      placeholder="城市"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">行业</label>
+                    <select
+                      value={profile.industry}
+                      onChange={(e) => setProfile({ ...profile, industry: e.target.value })}
+                      className="w-full border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white"
+                    >
+                      {['电商', '互联网', '金融', '医疗', '法律', '教育', '其他'].map((ind) => (
+                        <option key={ind}>{ind}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {editTab === 'social' && (
+              <>
+                {/* Public switch */}
+                <div className={`rounded-xl p-4 flex items-start gap-3 ${canShowSocials ? 'bg-blue-50 border border-blue-100' : 'bg-gray-50 border border-gray-200'}`}>
+                  <div className="flex-1">
+                    <p className={`text-sm font-medium ${canShowSocials ? 'text-blue-800' : 'text-gray-500'}`}>公开展示社交账号</p>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      {canShowSocials
+                        ? '开启后，你的社交账号将展示在榜单卡片和个人主页，方便其他用户联系你'
+                        : '仅认证用户（行业大 V、高级贡献者、认证专家）可以公开展示社交账号'}
+                    </p>
+                  </div>
+                  <button
+                    disabled={!canShowSocials}
+                    onClick={() => canShowSocials && setSocialPublic(!socialPublic)}
+                    className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 mt-0.5 ${
+                      !canShowSocials ? 'bg-gray-200 cursor-not-allowed' : socialPublic ? 'bg-blue-600' : 'bg-gray-300'
+                    }`}
+                  >
+                    <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${socialPublic && canShowSocials ? 'translate-x-5' : ''}`} />
+                  </button>
+                </div>
+
+                {/* Platform list */}
+                <div className="space-y-3">
+                  {socials.map((s, idx) => {
+                    const meta = SOCIAL_META[s.platform]
+                    return (
+                      <div key={s.platform} className="border rounded-xl p-3">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-lg">{meta.icon}</span>
+                          <span className="text-sm font-medium text-gray-700 flex-1">{meta.label}</span>
+                          <button
+                            onClick={() => {
+                              const next = [...socials]
+                              next[idx] = { ...s, enabled: !s.enabled }
+                              setSocials(next)
+                            }}
+                            className={`text-xs px-2 py-0.5 rounded-full font-medium transition-colors ${
+                              s.enabled ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                            }`}
+                          >
+                            {s.enabled ? '已关联' : '+ 关联'}
+                          </button>
+                        </div>
+                        {s.enabled && (
+                          <input
+                            value={s.handle}
+                            onChange={(e) => {
+                              const next = [...socials]
+                              next[idx] = { ...s, handle: e.target.value }
+                              setSocials(next)
+                            }}
+                            placeholder={`输入你的 ${meta.label} 账号名`}
+                            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+                          />
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className="px-5 py-4 border-t bg-gray-50 flex gap-3 flex-shrink-0">
+            <button
+              onClick={() => setEditOpen(false)}
+              className="flex-1 border text-gray-600 py-2.5 rounded-xl text-sm hover:bg-gray-100 transition-colors"
+            >
+              取消
+            </button>
+            <button
+              onClick={handleSave}
+              className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                saved ? 'bg-emerald-500 text-white' : 'bg-blue-600 text-white hover:bg-blue-700'
+              }`}
+            >
+              {saved ? '✓ 已保存' : '保存'}
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   )
 }

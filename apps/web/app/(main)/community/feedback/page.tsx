@@ -246,9 +246,39 @@ export default function FeedbackPage() {
             {filtered.map((feedback) => {
               const status = STATUS_MAP[feedback.status]
               const isVoted = votedItems.has(feedback.id)
+              const totalVotes = feedback.votes + (isVoted ? 1 : 0)
+              const maxVotes = Math.max(...FEEDBACK_LIST.map((f) => f.votes)) + 1
+              const heatPct = Math.round((totalVotes / maxVotes) * 100)
+              const isHot = totalVotes >= 80
+              const isWarm = totalVotes >= 40 && totalVotes < 80
+
+              const heatBarColor = isHot
+                ? 'from-orange-400 to-red-500'
+                : isWarm
+                  ? 'from-amber-300 to-orange-400'
+                  : totalVotes >= 20
+                    ? 'from-blue-300 to-blue-500'
+                    : 'from-gray-200 to-gray-300'
+
+              const borderAccent = isHot
+                ? 'border-l-4 border-l-orange-400'
+                : isWarm
+                  ? 'border-l-4 border-l-amber-400'
+                  : ''
 
               return (
-                <div key={feedback.id} className="bg-white rounded-xl shadow-sm border overflow-hidden hover:shadow-md transition-shadow">
+                <div
+                  key={feedback.id}
+                  className={`bg-white rounded-xl shadow-sm border overflow-hidden hover:shadow-md transition-shadow ${borderAccent}`}
+                >
+                  {/* Heat bar at top */}
+                  <div className="h-1 bg-gray-100">
+                    <div
+                      className={`h-full bg-gradient-to-r ${heatBarColor} transition-all duration-500`}
+                      style={{ width: `${heatPct}%` }}
+                    />
+                  </div>
+
                   <div className="p-5">
                     <div className="flex gap-4">
                       {/* Vote Button */}
@@ -257,10 +287,10 @@ export default function FeedbackPage() {
                           onClick={() => handleVote(feedback.id)}
                           className={`w-12 h-12 rounded-xl flex flex-col items-center justify-center transition-all ${isVoted ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
                         >
-                          <span className="text-lg">{isVoted ? '👍' : '👍🏻'}</span>
+                          <span className="text-lg">▲</span>
                         </button>
                         <span className={`text-sm font-bold ${isVoted ? 'text-blue-600' : 'text-gray-600'}`}>
-                          {feedback.votes + (isVoted ? 1 : 0)}
+                          {totalVotes}
                         </span>
                       </div>
 
@@ -274,15 +304,33 @@ export default function FeedbackPage() {
                             <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
                               {feedback.category}
                             </span>
+                            {isHot && (
+                              <span className="text-xs bg-orange-50 text-orange-600 border border-orange-200 px-2 py-0.5 rounded-full font-medium animate-pulse">
+                                🔥 热门
+                              </span>
+                            )}
                             <span className="text-xs text-gray-400">{feedback.createdAt}</span>
                           </div>
                         </div>
 
-                        <h3 className="text-base font-semibold text-gray-900 mb-2 cursor-pointer hover:text-blue-600 transition-colors">
+                        <h3 className={`font-semibold mb-2 cursor-pointer hover:text-blue-600 transition-colors ${isHot ? 'text-lg text-gray-900' : 'text-base text-gray-900'}`}>
                           {feedback.title}
                         </h3>
 
                         <p className="text-sm text-gray-600 mb-3 line-clamp-2">{feedback.description}</p>
+
+                        {/* Vote heat bar (inline) */}
+                        <div className="mb-3">
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                              <div
+                                className={`h-full bg-gradient-to-r ${heatBarColor} rounded-full transition-all duration-500`}
+                                style={{ width: `${heatPct}%` }}
+                              />
+                            </div>
+                            <span className="text-xs text-gray-400 whitespace-nowrap">{heatPct}% 热度</span>
+                          </div>
+                        </div>
 
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
@@ -339,25 +387,35 @@ export default function FeedbackPage() {
             <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
               <span>🔥</span> 热门反馈
             </h3>
-            <div className="space-y-2.5">
+            <div className="space-y-3">
               {FEEDBACK_LIST.sort((a, b) => b.votes - a.votes)
                 .slice(0, 5)
-                .map((f, i) => (
-                  <div key={f.id} className="cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors">
-                    <div className="flex items-start gap-2">
-                      <span className="text-xs font-bold text-gray-400 mt-0.5">{i + 1}</span>
-                      <div className="flex-1">
-                        <p className="text-sm text-gray-700 line-clamp-2 mb-1">{f.title}</p>
-                        <div className="flex items-center gap-2 text-xs text-gray-400">
-                          <span>👍 {f.votes}</span>
-                          <span className={`px-1.5 py-0.5 rounded-full ${STATUS_MAP[f.status].color}`}>
-                            {STATUS_MAP[f.status].label}
-                          </span>
+                .map((f, i) => {
+                  const maxV = FEEDBACK_LIST[0]?.votes || 1
+                  const pct = Math.round((f.votes / maxV) * 100)
+                  const barColor = f.votes >= 80 ? 'bg-orange-400' : f.votes >= 40 ? 'bg-amber-400' : 'bg-blue-400'
+                  return (
+                    <div key={f.id} className="cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors">
+                      <div className="flex items-start gap-2 mb-1.5">
+                        <span className="text-xs font-bold text-gray-400 mt-0.5 w-4">{i + 1}</span>
+                        <div className="flex-1">
+                          <p className="text-sm text-gray-700 line-clamp-2 mb-1">{f.title}</p>
+                          <div className="flex items-center gap-2 text-xs text-gray-400">
+                            <span className="font-semibold text-gray-700">▲ {f.votes}</span>
+                            <span className={`px-1.5 py-0.5 rounded-full ${STATUS_MAP[f.status].color}`}>
+                              {STATUS_MAP[f.status].label}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="pl-6">
+                        <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
+                          <div className={`h-full ${barColor} rounded-full transition-all`} style={{ width: `${pct}%` }} />
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
             </div>
           </div>
 
