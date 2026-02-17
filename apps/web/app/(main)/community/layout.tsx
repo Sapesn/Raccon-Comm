@@ -14,9 +14,18 @@ const tabs = [
   { href: '/community/profile', label: '个人中心' },
 ]
 
+const moreTabs = [
+  { href: '/community/members', label: '用户榜单', icon: '👥' },
+  { href: '/community/events', label: '社区活动', icon: '🗓️' },
+  { href: '/community/honors', label: '荣誉室', icon: '🏆' },
+]
+
 export default function CommunityLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [moreOpen, setMoreOpen] = useState(false)
+
+  const isMoreActive = moreTabs.some((t) => pathname.startsWith(t.href))
 
   return (
     <div className="min-h-screen bg-[#f5f7fa]">
@@ -40,7 +49,7 @@ export default function CommunityLayout({ children }: { children: ReactNode }) {
                 <Link
                   key={tab.href}
                   href={tab.href}
-                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
                     isActive ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
                   }`}
                 >
@@ -48,6 +57,41 @@ export default function CommunityLayout({ children }: { children: ReactNode }) {
                 </Link>
               )
             })}
+
+            {/* More Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setMoreOpen(!moreOpen)}
+                onBlur={() => setTimeout(() => setMoreOpen(false), 150)}
+                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1 ${
+                  isMoreActive ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                更多
+                <svg className={`w-3 h-3 transition-transform ${moreOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {moreOpen && (
+                <div className="absolute top-full left-0 mt-1.5 w-40 bg-white rounded-xl shadow-lg border py-1 z-50">
+                  {moreTabs.map((tab) => {
+                    const isActive = pathname.startsWith(tab.href)
+                    return (
+                      <Link
+                        key={tab.href}
+                        href={tab.href}
+                        className={`flex items-center gap-2 px-4 py-2.5 text-sm transition-colors ${
+                          isActive ? 'text-blue-600 bg-blue-50 font-medium' : 'text-gray-700 hover:bg-gray-50'
+                        }`}
+                      >
+                        <span>{tab.icon}</span>
+                        {tab.label}
+                      </Link>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
           </nav>
 
           {/* Desktop Right Actions */}
@@ -56,7 +100,7 @@ export default function CommunityLayout({ children }: { children: ReactNode }) {
               <input
                 type="text"
                 placeholder="搜索案例、讨论..."
-                className="pl-8 pr-4 py-1.5 text-sm border rounded-full bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-300 w-44 lg:w-52"
+                className="pl-8 pr-4 py-1.5 text-sm border rounded-full bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-300 w-40 lg:w-48"
               />
               <svg className="absolute left-2.5 top-2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -97,17 +141,18 @@ export default function CommunityLayout({ children }: { children: ReactNode }) {
         {menuOpen && (
           <div className="md:hidden border-t bg-white">
             <nav className="container mx-auto px-4 py-3 flex flex-col gap-1">
-              {tabs.map((tab) => {
-                const isActive = tab.exact ? pathname === tab.href : pathname.startsWith(tab.href)
+              {[...tabs, ...moreTabs].map((tab) => {
+                const isActive = 'exact' in tab && tab.exact ? pathname === tab.href : pathname.startsWith(tab.href)
                 return (
                   <Link
                     key={tab.href}
                     href={tab.href}
                     onClick={() => setMenuOpen(false)}
-                    className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                    className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors flex items-center gap-2 ${
                       isActive ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100'
                     }`}
                   >
+                    {'icon' in tab && <span>{tab.icon}</span>}
                     {tab.label}
                   </Link>
                 )
