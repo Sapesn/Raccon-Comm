@@ -8,6 +8,7 @@ import { usePathname } from 'next/navigation'
 const tabs = [
   { href: '/community', label: '首页', exact: true },
   { href: '/community/cases', label: '成果案例' },
+  { href: '/community/knowledge', label: '知识库' },
   { href: '/community/discuss', label: '交流专区' },
   { href: '/community/feedback', label: '产品反馈' },
   { href: '/community/profile', label: '个人中心' },

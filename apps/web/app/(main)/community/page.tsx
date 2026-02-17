@@ -1,5 +1,60 @@
 import Link from 'next/link'
 
+const FEATURED_KBS = [
+  {
+    id: '1',
+    title: '电商运营知识库 · 完整版',
+    industry: '电商',
+    desc: '涵盖选品策略、广告投放、数据分析、客服话术等 200+ 篇文档，适合电商团队日常运营参考。',
+    tags: ['选品', '广告', '数据分析'],
+    author: '张小明',
+    avatar: 'Z',
+    docCount: 236,
+    saves: 1284,
+    views: 4820,
+    isOfficial: true,
+  },
+  {
+    id: '2',
+    title: '法律合规知识库 · 企业版',
+    industry: '法律',
+    desc: '整理了劳动合同、保密协议、股权协议等常见法律文件模板及风险分析，适合法务和创业团队。',
+    tags: ['合同', '合规', '风险'],
+    author: '李律师',
+    avatar: 'L',
+    docCount: 158,
+    saves: 986,
+    views: 3560,
+    isOfficial: false,
+  },
+  {
+    id: '3',
+    title: 'AI Prompt 工程实践库',
+    industry: '互联网',
+    desc: '汇总 500+ 个经过验证的 Prompt 模板，涵盖文本处理、代码生成、数据分析等场景，持续更新。',
+    tags: ['Prompt', 'AI', '模板'],
+    author: 'Prompt 工程师',
+    avatar: 'P',
+    docCount: 512,
+    saves: 2341,
+    views: 8960,
+    isOfficial: true,
+  },
+  {
+    id: '4',
+    title: '金融分析师工具箱',
+    industry: '金融',
+    desc: '包含财务分析框架、估值模型、行业研究模板、数据处理脚本等，适合投研和财务分析师使用。',
+    tags: ['财务', '估值', '研究'],
+    author: '陈分析师',
+    avatar: 'C',
+    docCount: 189,
+    saves: 743,
+    views: 2840,
+    isOfficial: false,
+  },
+]
+
 const FEATURED_CASES = [
   {
     id: '1',
@@ -187,7 +242,7 @@ export default function CommunityHomePage() {
               { label: '案例总数', value: '536', change: '+47', color: 'text-blue-600' },
               { label: '本周复用', value: '1,248', change: '+23%', color: 'text-green-600' },
               { label: '社区成员', value: '12,840', change: '+312', color: 'text-violet-600' },
-              { label: 'ToB 留资', value: '89', change: '+12', color: 'text-orange-500' },
+              { label: '共享知识库', value: '318', change: '+24', color: 'text-orange-500' },
             ].map((stat) => (
               <div key={stat.label} className="bg-white rounded-xl p-4 shadow-sm border">
                 <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
@@ -264,6 +319,52 @@ export default function CommunityHomePage() {
                       <span>👁 {c.views}</span>
                       <span>❤️ {c.likes}</span>
                       <span className="text-blue-500 font-medium">⚡ {c.reuses} 次复用</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Hot Knowledge Bases */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold text-gray-900 text-lg">热门知识库</h3>
+              <Link href="/community/knowledge" className="text-sm text-blue-600 hover:underline">查看全部 →</Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {FEATURED_KBS.map((kb) => (
+                <Link
+                  key={kb.id}
+                  href={`/community/knowledge`}
+                  className="bg-white rounded-xl p-5 shadow-sm border hover:shadow-md hover:-translate-y-0.5 transition-all block group"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full font-medium">{kb.industry}</span>
+                      {kb.isOfficial && (
+                        <span className="text-xs bg-amber-50 text-amber-600 px-2 py-0.5 rounded-full font-medium">官方推荐</span>
+                      )}
+                    </div>
+                    <span className="text-xs text-gray-400">📄 {kb.docCount} 篇</span>
+                  </div>
+                  <h4 className="font-semibold text-gray-900 mb-2 line-clamp-1 group-hover:text-blue-600 transition-colors">{kb.title}</h4>
+                  <p className="text-sm text-gray-500 line-clamp-2 mb-3">{kb.desc}</p>
+                  <div className="flex gap-1.5 mb-3 flex-wrap">
+                    {kb.tags.map((tag) => (
+                      <span key={tag} className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">#{tag}</span>
+                    ))}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full bg-gradient-to-br from-emerald-400 to-blue-400 flex items-center justify-center text-white text-xs font-bold">
+                        {kb.avatar}
+                      </div>
+                      <span className="text-xs text-gray-500">{kb.author}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs text-gray-400">
+                      <span>👁 {kb.views.toLocaleString()}</span>
+                      <span className="text-emerald-600 font-medium">📥 {kb.saves.toLocaleString()} 转存</span>
                     </div>
                   </div>
                 </Link>
