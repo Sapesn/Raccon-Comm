@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { SOCIAL_META, canPublishSocials, type SocialPlatform } from '../members/data'
+import { getRaccoonLevel } from '../raccoon/data'
 
 const MY_CASES = [
   {
@@ -329,6 +330,72 @@ export default function ProfilePage() {
           {/* 概览 */}
           {activeTab === 'overview' && (
             <div className="space-y-5">
+              {/* My Raccoon Card */}
+              {(() => {
+                const myRaccoonLevel = getRaccoonLevel(totalPoints)
+                return (
+                  <div className="bg-gradient-to-br from-blue-50 via-violet-50 to-purple-50 rounded-2xl border-2 border-violet-100 overflow-hidden">
+                    <div className="p-5">
+                      <div className="flex items-start gap-4">
+                        {/* Raccoon Avatar */}
+                        <div className={`relative w-20 h-20 rounded-2xl bg-gradient-to-br ${myRaccoonLevel.aura} flex items-center justify-center text-4xl flex-shrink-0 shadow-md`}>
+                          {myRaccoonLevel.emoji}
+                          {myRaccoonLevel.accessory && (
+                            <span className="absolute -top-1 -right-1 text-xl">{myRaccoonLevel.accessory}</span>
+                          )}
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="font-bold text-gray-900 text-lg">我的小浣熊</h3>
+                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${myRaccoonLevel.level === 6 ? 'bg-amber-100 text-amber-700' : myRaccoonLevel.level === 5 ? 'bg-violet-100 text-violet-700' : 'bg-blue-100 text-blue-700'}`}>
+                              {myRaccoonLevel.name} {myRaccoonLevel.form}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-600 mb-3">{myRaccoonLevel.desc}</p>
+                          <div className="flex items-center gap-2 text-xs bg-white/70 rounded-lg px-3 py-2 mb-3">
+                            <span className="text-gray-500">特殊能力：</span>
+                            <span className="font-medium text-gray-700">{myRaccoonLevel.ability}</span>
+                          </div>
+
+                          {/* Progress Bar */}
+                          <div>
+                            <div className="flex justify-between text-xs mb-1">
+                              <span className="text-gray-500">成长进度</span>
+                              <span className="font-semibold text-violet-600">
+                                {totalPoints.toLocaleString()} / {myRaccoonLevel.maxPoints?.toLocaleString() ?? '∞'} 积分
+                              </span>
+                            </div>
+                            <div className="h-2 rounded-full bg-white/70">
+                              <div
+                                className="h-2 rounded-full bg-gradient-to-r from-blue-400 via-violet-500 to-purple-500"
+                                style={{
+                                  width: myRaccoonLevel.maxPoints
+                                    ? `${Math.min(((totalPoints - myRaccoonLevel.minPoints) / (myRaccoonLevel.maxPoints - myRaccoonLevel.minPoints)) * 100, 100)}%`
+                                    : '100%'
+                                }}
+                              />
+                            </div>
+                            {myRaccoonLevel.maxPoints && (
+                              <p className="text-xs text-gray-500 mt-1">
+                                再获得 {(myRaccoonLevel.maxPoints - totalPoints + 1).toLocaleString()} 积分可进化为下一形态
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        <Link
+                          href="/community/raccoon"
+                          className="flex-shrink-0 bg-gradient-to-r from-blue-500 to-violet-500 text-white text-sm px-4 py-2 rounded-xl hover:opacity-90 transition-opacity font-medium"
+                        >
+                          前往浣熊园 →
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })()}
+
               <div className="flex items-center justify-between mb-2">
                 <h3 className="font-bold text-gray-900">近期动态</h3>
               </div>
