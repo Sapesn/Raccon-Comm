@@ -15,6 +15,7 @@ const tabs = [
 ]
 
 const moreTabs = [
+  { href: '/community/guide', label: '使用指南', icon: '📖' },
   { href: '/community/members', label: '用户榜单', icon: '👥' },
   { href: '/community/events', label: '社区活动', icon: '🗓️' },
   { href: '/community/honors', label: '荣誉室', icon: '🏆' },

@@ -252,6 +252,25 @@ export default function CommunityHomePage() {
             ))}
           </div>
 
+          {/* Quick Navigation */}
+          <div className="bg-gradient-to-r from-violet-50 to-blue-50 rounded-xl border border-violet-100 p-4 mb-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">📖</span>
+                <div>
+                  <h3 className="font-semibold text-gray-900 text-sm">刚来社区？查看使用指南</h3>
+                  <p className="text-xs text-gray-500">了解社区功能、积分体系、身份认证等</p>
+                </div>
+              </div>
+              <Link
+                href="/community/guide"
+                className="bg-violet-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-violet-700 transition-colors whitespace-nowrap"
+              >
+                查看指南 →
+              </Link>
+            </div>
+          </div>
+
           {/* Industry Quick Entry */}
           <div className="bg-white rounded-xl p-5 shadow-sm border mb-6">
             <div className="flex items-center justify-between mb-4">
