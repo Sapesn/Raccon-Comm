@@ -1,43 +1,107 @@
+'use client'
+
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+
 export default function LoginPage() {
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    // 模拟登录过程
+    setIsLoading(true)
+
+    // 延迟 800ms 模拟网络请求
+    await new Promise(resolve => setTimeout(resolve, 800))
+
+    // 保存假的用户信息到 localStorage
+    localStorage.setItem('user', JSON.stringify({
+      email: email || 'demo@raccoon.com',
+      name: '演示用户',
+      avatar: '🦝',
+      loggedIn: true,
+    }))
+
+    // 跳转到 Dashboard
+    router.push('/dashboard')
+  }
+
   return (
-    <div className="bg-white p-8 rounded-lg shadow-lg">
-      <h1 className="text-2xl font-bold mb-6">登录</h1>
-      <form className="space-y-4">
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium mb-1">
-            邮箱
-          </label>
-          <input
-            type="email"
-            id="email"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="your@email.com"
-          />
-        </div>
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium mb-1">
-            密码
-          </label>
-          <input
-            type="password"
-            id="password"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="••••••••"
-          />
-        </div>
-        <button
-          type="submit"
-          className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-        >
-          登录
-        </button>
-      </form>
-      <p className="mt-4 text-center text-sm text-gray-600">
-        还没有账号？{' '}
-        <a href="/register" className="text-blue-600 hover:underline">
-          立即注册
-        </a>
-      </p>
+    <div className="container mx-auto flex min-h-screen items-center justify-center px-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <div className="flex items-center justify-center mb-4">
+            <span className="text-5xl">🦝</span>
+          </div>
+          <CardTitle className="text-2xl font-bold text-center">登录账户</CardTitle>
+          <CardDescription className="text-center">
+            使用您的邮箱和密码登录小浣熊知识库
+            <br />
+            <span className="text-xs text-muted-foreground/60">(演示模式：输入任意内容即可登录)</span>
+          </CardDescription>
+        </CardHeader>
+        <form onSubmit={handleLogin}>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">邮箱地址</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="your@email.com"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
+              />
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">密码</Label>
+                <Link
+                  href="/forgot-password"
+                  className="text-sm text-primary hover:underline"
+                >
+                  忘记密码？
+                </Link>
+              </div>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
+              />
+            </div>
+          </CardContent>
+          <CardFooter className="flex flex-col space-y-4">
+            <Button
+              type="submit"
+              className="w-full"
+              size="lg"
+              disabled={isLoading}
+            >
+              {isLoading ? '登录中...' : '登录'}
+            </Button>
+            <div className="text-center text-sm text-muted-foreground">
+              还没有账号？{' '}
+              <Link href="/register" className="text-primary font-medium hover:underline">
+                立即注册
+              </Link>
+            </div>
+          </CardFooter>
+        </form>
+      </Card>
     </div>
   )
 }

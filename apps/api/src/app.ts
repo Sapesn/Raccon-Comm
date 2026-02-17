@@ -3,21 +3,29 @@ import cors from '@fastify/cors'
 import jwt from '@fastify/jwt'
 import multipart from '@fastify/multipart'
 import rateLimit from '@fastify/rate-limit'
+import { validateEnv, apiEnvSchema } from '@raccoon-kb/shared'
+import { errorHandler } from './middleware/error-handler'
+
+// 验证环境变量
+export const env = validateEnv(apiEnvSchema)
 
 const fastify = Fastify({
   logger: {
-    level: process.env.LOG_LEVEL || 'info',
+    level: env.LOG_LEVEL,
   },
 })
 
+// 注册错误处理器
+fastify.setErrorHandler(errorHandler)
+
 // 注册插件
 await fastify.register(cors, {
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  origin: env.CORS_ORIGIN,
   credentials: true,
 })
 
 await fastify.register(jwt, {
-  secret: process.env.JWT_SECRET || 'your-secret-key-change-this',
+  secret: env.JWT_SECRET,
 })
 
 await fastify.register(multipart, {

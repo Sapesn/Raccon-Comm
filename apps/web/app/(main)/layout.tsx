@@ -14,6 +14,9 @@ export default function MainLayout({
             <a href="/dashboard" className="text-gray-600 hover:text-gray-900">
               我的知识库
             </a>
+            <a href="/community" className="text-blue-600 font-semibold hover:text-blue-700">
+              社区
+            </a>
             <a href="/profile" className="text-gray-600 hover:text-gray-900">
               个人中心
             </a>

@@ -1,0 +1,638 @@
+'use client'
+
+import { useState, use } from 'react'
+import Link from 'next/link'
+
+const CASES_DATA: Record<string, {
+  id: string
+  title: string
+  industry: string
+  tags: string[]
+  author: string
+  authorTitle: string
+  avatar: string
+  avatarBg: string
+  views: number
+  likes: number
+  reuses: number
+  collects: number
+  createdAt: string
+  updatedAt: string
+  isOfficial: boolean
+  background: string
+  workflow: {
+    step: number
+    name: string
+    desc: string
+    icon: string
+    prompt?: string
+  }[]
+  inputs: { name: string; type: string; example: string }[]
+  outputs: { name: string; desc: string }[]
+  result: string
+  resultMetrics: { label: string; before: string; after: string; change: string }[]
+  value: string
+  comments: { id: string; author: string; avatar: string; avatarBg: string; content: string; time: string; likes: number }[]
+  related: { id: string; title: string; industry: string; reuses: number }[]
+}> = {
+  '1': {
+    id: '1',
+    title: '电商行业月度销售报告自动化生成链路',
+    industry: '电商',
+    tags: ['数据分析', '报告生成', '自动化', 'Excel处理'],
+    author: '张小明',
+    authorTitle: '某头部电商平台数据分析师',
+    avatar: 'Z',
+    avatarBg: 'from-blue-400 to-cyan-400',
+    views: 1284,
+    likes: 89,
+    reuses: 56,
+    collects: 134,
+    createdAt: '2025-12-10',
+    updatedAt: '2天前',
+    isOfficial: true,
+    background: '电商平台每月底需要向管理层提交销售报告，以往由数据团队手动整理 Excel 原始数据、计算各维度指标、制作图表，最后编写分析文字。整个流程耗时约 3 小时，且容易因手动操作产生计算错误。高峰期人手紧张时，报告质量难以保障。',
+    workflow: [
+      {
+        step: 1,
+        name: '上传原始数据',
+        icon: '📁',
+        desc: '将月度销售明细 Excel 文件上传至小浣熊，支持多 Sheet 批量上传',
+        prompt: '请读取上传的 Excel 文件，识别所有 Sheet 页及数据结构，列出包含的字段名称和数据条数。',
+      },
+      {
+        step: 2,
+        name: '数据清洗去重',
+        icon: '🧹',
+        desc: '自动识别并处理重复订单、异常金额、格式不一致等数据质量问题',
+        prompt: '对上述数据进行清洗：1) 删除重复订单号；2) 标记金额异常（超过均值3倍标准差）的记录；3) 统一日期格式为 YYYY-MM-DD；输出清洗后数据及问题清单。',
+      },
+      {
+        step: 3,
+        name: '多维度分析',
+        icon: '📊',
+        desc: '按品类、渠道、地区、时间维度计算 GMV、订单量、客单价、同比环比等指标',
+        prompt: '基于清洗后的数据，计算以下指标：总GMV、总订单量、平均客单价、退款率，以及按品类/渠道/地区分组的各维度数据，并计算与上月和去年同月的环比同比变化率。',
+      },
+      {
+        step: 4,
+        name: '趋势洞察',
+        icon: '🔍',
+        desc: '识别数据中的增长亮点、下滑警示，生成智能化分析结论',
+        prompt: '基于以上统计数据，分析：1) 增长最快的3个品类和渠道；2) 需要关注的下滑风险项；3) 与行业基准相比的表现；给出3-5条具体的业务洞察。',
+      },
+      {
+        step: 5,
+        name: '生成 PDF 报告',
+        icon: '📄',
+        desc: '输出包含图表、数据表格和分析文字的专业 PDF 报告，一键发送给管理层',
+        prompt: '基于以上所有分析结果，生成一份结构完整的月度销售报告，包含：执行摘要、核心指标大盘、各维度详细分析、风险与机会、下月建议，格式专业，适合管理层阅读。',
+      },
+    ],
+    inputs: [
+      { name: '销售明细 Excel', type: '文件', example: 'sales_2024_12.xlsx (必填)' },
+      { name: '目标/预算数据', type: '文件', example: 'budget_2024.xlsx (可选)' },
+      { name: '报告月份', type: '文本', example: '2024年12月' },
+      { name: '分析维度', type: '选项', example: '品类、渠道、地区（可多选）' },
+    ],
+    outputs: [
+      { name: 'PDF 月度报告', desc: '含执行摘要、指标大盘、分析图表的完整报告' },
+      { name: '数据清洗日志', desc: '记录所有数据问题及处理方式' },
+      { name: '指标汇总表', desc: '可直接复制到 PPT 的数据表格' },
+    ],
+    result: '该链路已在某头部电商平台数据团队稳定运行 3 个月，月均处理 15 份报告，累计节省人力 200+ 小时。报告生成时间从平均 3 小时压缩至 5 分钟，数据准确率从 96% 提升至 99.8%。',
+    resultMetrics: [
+      { label: '报告生成时间', before: '3 小时', after: '5 分钟', change: '-97%' },
+      { label: '数据准确率', before: '96%', after: '99.8%', change: '+3.8%' },
+      { label: '月均节省人力', before: '-', after: '65 小时', change: '' },
+      { label: '分析维度覆盖', before: '3 个', after: '8 个', change: '+167%' },
+    ],
+    value: '将数据团队从重复性的报告制作工作中解放出来，让他们专注于更高价值的业务分析和策略制定。同时通过标准化流程，消除了人工操作引入的错误风险，提升了管理决策的数据质量。',
+    comments: [
+      {
+        id: 'c1',
+        author: '数据组长',
+        avatar: 'D',
+        avatarBg: 'from-green-400 to-teal-400',
+        content: '这个链路我们团队用了一个月了，真的太好用了！唯一的建议是在数据清洗步骤可以加一个人工审核环节，有些业务特殊情况需要人工判断。',
+        time: '30分钟前',
+        likes: 12,
+      },
+      {
+        id: 'c2',
+        author: '运营总监',
+        avatar: 'Y',
+        avatarBg: 'from-purple-400 to-pink-400',
+        content: '作为接收报告的管理层，报告质量确实提升很多，格式统一，数据准确。最喜欢最后的"下月建议"部分，很有参考价值。',
+        time: '2小时前',
+        likes: 8,
+      },
+      {
+        id: 'c3',
+        author: '小白学习中',
+        avatar: 'X',
+        avatarBg: 'from-orange-400 to-amber-400',
+        content: '请问上传的 Excel 文件有什么格式要求吗？我们的原始数据是从系统导出的，有时候格式比较乱。',
+        time: '5小时前',
+        likes: 3,
+      },
+    ],
+    related: [
+      { id: '5', title: '财务季报智能分析与可视化', industry: '金融', reuses: 29 },
+      { id: '4', title: '竞品分析报告一键生成链路', industry: '互联网', reuses: 31 },
+      { id: '6', title: '客服工单智能分类与优先级排序', industry: '零售', reuses: 24 },
+    ],
+  },
+  '2': {
+    id: '2',
+    title: '法律合同风险条款智能审查链路',
+    industry: '法律',
+    tags: ['合同审查', '风险识别', 'NLP', '法务'],
+    author: '李律师',
+    authorTitle: '执业律师 / 法律科技探索者',
+    avatar: 'L',
+    avatarBg: 'from-violet-400 to-purple-400',
+    views: 986,
+    likes: 73,
+    reuses: 42,
+    collects: 98,
+    createdAt: '2025-12-08',
+    updatedAt: '5小时前',
+    isOfficial: false,
+    background: '法律团队每周需要审查大量采购合同、服务协议和劳动合同。传统人工审查不仅耗时，还存在遗漏风险条款的风险。一份标准合同的审查通常需要资深律师花费 2-4 小时，且质量高度依赖个人经验。',
+    workflow: [
+      {
+        step: 1,
+        name: '上传合同文件',
+        icon: '📄',
+        desc: '支持 PDF、Word 格式，自动提取文本内容，识别合同类型',
+        prompt: '请读取上传的合同文件，识别合同类型（采购/服务/劳动/保密等），提取甲乙双方信息、合同金额、签订日期、履行期限等基本信息。',
+      },
+      {
+        step: 2,
+        name: '条款结构化解析',
+        icon: '🔍',
+        desc: '将合同全文解析为结构化条款，建立条款索引',
+        prompt: '将合同正文按章节和条款编号进行结构化解析，输出条款列表，每条包含：条款编号、条款标题、核心内容摘要（不超过50字）。',
+      },
+      {
+        step: 3,
+        name: '风险条款识别',
+        icon: '⚠️',
+        desc: '对照风险条款库，识别高风险、中风险、低风险条款',
+        prompt: '按照以下维度逐条检查风险：1)违约责任是否对等；2)单方解除权是否合理；3)免责条款是否过宽；4)知识产权归属是否清晰；5)争议解决条款是否有利；6)必备条款是否缺失。对每个风险条款标注风险等级（高/中/低）和风险类型。',
+      },
+      {
+        step: 4,
+        name: '修改建议生成',
+        icon: '✏️',
+        desc: '针对每个风险条款给出具体的修改建议和替代表述',
+        prompt: '针对上述标注的风险条款，分别给出：1)风险说明（该条款存在什么风险）；2)修改建议（如何修改更有利）；3)参考表述（建议的替代条款文字）。',
+      },
+      {
+        step: 5,
+        name: '输出审查报告',
+        icon: '📋',
+        desc: '生成包含风险评分、条款清单、修改建议的结构化审查报告',
+        prompt: '整合以上分析，生成合同审查报告：1)综合风险评分（0-100）；2)关键风险汇总表；3)各条款详细审查意见；4)优先需要谈判修改的条款清单；5)总体审查意见。',
+      },
+    ],
+    inputs: [
+      { name: '合同文件', type: '文件', example: 'contract.pdf / contract.docx (必填)' },
+      { name: '合同类型', type: '选项', example: '采购合同、服务合同、劳动合同等' },
+      { name: '己方角色', type: '选项', example: '甲方 / 乙方（影响风险判断角度）' },
+      { name: '行业背景', type: '文本', example: '如"软件服务行业"，帮助判断行业惯例' },
+    ],
+    outputs: [
+      { name: '合同审查报告', desc: '含风险评分、逐条审查意见的完整报告' },
+      { name: '风险条款清单', desc: '按风险等级排序的条款汇总表' },
+      { name: '修改建议文件', desc: '带批注的合同修改版本' },
+    ],
+    result: '已帮助律所审查 500+ 份合同，平均审查时间从 3 小时缩短至 22 分钟，风险识别覆盖率从人工的约 85% 提升至 97% 以上。客户反馈满意度 4.8/5。',
+    resultMetrics: [
+      { label: '审查时间', before: '3 小时', after: '22 分钟', change: '-88%' },
+      { label: '风险识别率', before: '约85%', after: '97%+', change: '+12%' },
+      { label: '已审查合同', before: '-', after: '500+ 份', change: '' },
+      { label: '客户满意度', before: '-', after: '4.8/5', change: '' },
+    ],
+    value: '降低企业法律风险，提升合同审查效率，让律师将精力聚焦在高价值的法律判断和谈判策略上，而非重复性的条款核查工作。同时通过标准化审查，消除个人经验差异带来的审查质量不稳定问题。',
+    comments: [
+      {
+        id: 'c1',
+        author: '企业法务',
+        avatar: 'Q',
+        avatarBg: 'from-blue-400 to-indigo-400',
+        content: '作为企业法务，这个工具帮了大忙。以前每周要审查十几份合同，现在用这个链路可以在一天内全部搞定，而且质量更稳定。',
+        time: '1小时前',
+        likes: 15,
+      },
+      {
+        id: 'c2',
+        author: '法学研究者',
+        avatar: 'F',
+        avatarBg: 'from-green-400 to-emerald-400',
+        content: '风险识别维度覆盖很全面，建议后续可以增加"合同效力"审查模块，比如格式条款的提示义务、电子合同的签署合规性等。',
+        time: '3小时前',
+        likes: 7,
+      },
+    ],
+    related: [
+      { id: '1', title: '电商行业月度销售报告自动化生成链路', industry: '电商', reuses: 56 },
+      { id: '3', title: '医疗病历结构化提取与摘要生成', industry: '医疗', reuses: 38 },
+    ],
+  },
+}
+
+export default function CaseDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params)
+  const caseData = CASES_DATA[id] ?? CASES_DATA['1']
+  const [liked, setLiked] = useState(false)
+  const [collected, setCollected] = useState(false)
+  const [showReuseModal, setShowReuseModal] = useState(false)
+  const [reuseStep, setReuseStep] = useState(0)
+  const [newComment, setNewComment] = useState('')
+  const [likedComments, setLikedComments] = useState<Set<string>>(new Set())
+
+  const handleReuse = () => {
+    setShowReuseModal(true)
+    setReuseStep(0)
+    const steps = [1, 2, 3]
+    steps.forEach((s) => {
+      setTimeout(() => setReuseStep(s), s * 900)
+    })
+  }
+
+  const reuseSteps = [
+    { icon: '📂', label: '自动打开小浣熊' },
+    { icon: '✍️', label: '加载示例文件 & 填充 Prompt' },
+    { icon: '🚀', label: '进入任务执行页' },
+  ]
+
+  return (
+    <div className="container mx-auto px-4 py-6 max-w-7xl">
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Main */}
+        <div className="flex-1 min-w-0">
+
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-2 text-sm text-gray-400 mb-4 overflow-hidden">
+            <Link href="/community" className="hover:text-blue-600 transition-colors">社区首页</Link>
+            <span>/</span>
+            <Link href="/community/cases" className="hover:text-blue-600 transition-colors">成果案例</Link>
+            <span>/</span>
+            <span className="text-gray-600 truncate">{caseData.title}</span>
+          </div>
+
+          {/* Title Card */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border mb-5">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-sm bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full font-medium">{caseData.industry}</span>
+              {caseData.isOfficial && (
+                <span className="text-sm bg-amber-50 text-amber-600 px-2.5 py-1 rounded-full font-medium">⭐ 官方推荐</span>
+              )}
+              {caseData.tags.map((tag) => (
+                <span key={tag} className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">#{tag}</span>
+              ))}
+            </div>
+
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">{caseData.title}</h1>
+
+            {/* Author Row */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${caseData.avatarBg} flex items-center justify-center text-white font-bold text-lg`}>
+                  {caseData.avatar}
+                </div>
+                <div>
+                  <div className="font-semibold text-gray-900">{caseData.author}</div>
+                  <div className="text-xs text-gray-400">{caseData.authorTitle} · 发布于 {caseData.createdAt}</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 text-sm text-gray-400">
+                <span>👁 {caseData.views}</span>
+                <button
+                  onClick={() => setLiked(!liked)}
+                  className={`flex items-center gap-1 transition-colors ${liked ? 'text-red-500' : 'hover:text-red-400'}`}
+                >
+                  ❤️ {caseData.likes + (liked ? 1 : 0)}
+                </button>
+                <button
+                  onClick={() => setCollected(!collected)}
+                  className={`flex items-center gap-1 transition-colors ${collected ? 'text-amber-500' : 'hover:text-amber-400'}`}
+                >
+                  ⭐ {caseData.collects + (collected ? 1 : 0)}
+                </button>
+                <span className="text-blue-500 font-medium">⚡ {caseData.reuses} 次复用</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 背景问题 */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border mb-5">
+            <h2 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+              <span className="w-7 h-7 bg-orange-100 rounded-lg flex items-center justify-center text-base">❓</span>
+              背景问题
+            </h2>
+            <p className="text-gray-700 leading-relaxed">{caseData.background}</p>
+          </div>
+
+          {/* 使用链路 */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border mb-5">
+            <h2 className="text-lg font-bold text-gray-900 mb-5 flex items-center gap-2">
+              <span className="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center text-base">⚡</span>
+              使用链路（{caseData.workflow.length} 个步骤）
+            </h2>
+
+            <div className="space-y-4">
+              {caseData.workflow.map((step, i) => (
+                <div key={step.step} className="relative">
+                  {i < caseData.workflow.length - 1 && (
+                    <div className="absolute left-5 top-14 bottom-0 w-0.5 bg-gray-100 -mb-4" />
+                  )}
+                  <div className="flex gap-4">
+                    {/* Step Number */}
+                    <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold z-10">
+                      {step.step}
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 bg-gray-50 rounded-xl p-4 border">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-xl">{step.icon}</span>
+                        <span className="font-semibold text-gray-900">{step.name}</span>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-3">{step.desc}</p>
+                      {step.prompt && (
+                        <div className="bg-white rounded-lg border border-dashed border-blue-200 p-3">
+                          <div className="text-xs font-semibold text-blue-600 mb-1.5 flex items-center gap-1">
+                            <span>💬</span> Prompt 示例
+                          </div>
+                          <p className="text-xs text-gray-600 leading-relaxed font-mono">{step.prompt}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 输入 & 输出 */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+            {/* 输入 */}
+            <div className="bg-white rounded-2xl p-5 shadow-sm border">
+              <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <span className="w-6 h-6 bg-green-100 rounded-lg flex items-center justify-center text-sm">📥</span>
+                需要的输入
+              </h2>
+              <div className="space-y-3">
+                {caseData.inputs.map((input, i) => (
+                  <div key={i} className="flex gap-3 p-3 bg-gray-50 rounded-xl">
+                    <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-medium flex-shrink-0 h-fit">{input.type}</span>
+                    <div>
+                      <div className="text-sm font-medium text-gray-800">{input.name}</div>
+                      <div className="text-xs text-gray-400 mt-0.5">{input.example}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 输出 */}
+            <div className="bg-white rounded-2xl p-5 shadow-sm border">
+              <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <span className="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center text-sm">📤</span>
+                输出成果
+              </h2>
+              <div className="space-y-3">
+                {caseData.outputs.map((output, i) => (
+                  <div key={i} className="flex gap-3 p-3 bg-gray-50 rounded-xl">
+                    <span className="text-blue-500 flex-shrink-0 mt-0.5">📄</span>
+                    <div>
+                      <div className="text-sm font-medium text-gray-800">{output.name}</div>
+                      <div className="text-xs text-gray-400 mt-0.5">{output.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* 成果展示 */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border mb-5">
+            <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <span className="w-7 h-7 bg-green-100 rounded-lg flex items-center justify-center text-base">📈</span>
+              成果展示
+            </h2>
+            <p className="text-gray-700 mb-5 leading-relaxed">{caseData.result}</p>
+
+            {/* Metrics Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {caseData.resultMetrics.map((metric) => (
+                <div key={metric.label} className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100 text-center">
+                  <div className="text-xs text-gray-500 mb-2">{metric.label}</div>
+                  <div className="flex items-center justify-center gap-2 mb-1">
+                    {metric.before !== '-' && (
+                      <>
+                        <span className="text-sm text-gray-400 line-through">{metric.before}</span>
+                        <span className="text-gray-300">→</span>
+                      </>
+                    )}
+                    <span className="text-base font-bold text-green-700">{metric.after}</span>
+                  </div>
+                  {metric.change && (
+                    <div className="text-xs font-semibold text-green-600">{metric.change}</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 价值总结 */}
+          <div className="bg-gradient-to-r from-blue-50 to-violet-50 rounded-2xl p-6 border border-blue-100 mb-5">
+            <h2 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+              <span className="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center text-base">💡</span>
+              价值总结
+            </h2>
+            <p className="text-gray-700 leading-relaxed">{caseData.value}</p>
+          </div>
+
+          {/* Comments */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border mb-5">
+            <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <span>💬</span> 评论 ({caseData.comments.length})
+            </h2>
+
+            {/* Comment Input */}
+            <div className="flex gap-3 mb-5">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-violet-500 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+                A
+              </div>
+              <div className="flex-1 flex gap-2">
+                <input
+                  type="text"
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  placeholder="写下你的想法或问题..."
+                  className="flex-1 border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+                />
+                <button
+                  onClick={() => setNewComment('')}
+                  className="bg-blue-600 text-white px-4 py-2.5 rounded-xl text-sm hover:bg-blue-700 transition-colors flex-shrink-0"
+                >
+                  发送
+                </button>
+              </div>
+            </div>
+
+            {/* Comment List */}
+            <div className="space-y-4">
+              {caseData.comments.map((comment) => (
+                <div key={comment.id} className="flex gap-3">
+                  <div className={`w-9 h-9 rounded-full bg-gradient-to-br ${comment.avatarBg} flex items-center justify-center text-white text-sm font-bold flex-shrink-0`}>
+                    {comment.avatar}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-semibold text-gray-900 text-sm">{comment.author}</span>
+                      <span className="text-xs text-gray-400">{comment.time}</span>
+                    </div>
+                    <p className="text-sm text-gray-700 bg-gray-50 rounded-xl p-3 mb-2">{comment.content}</p>
+                    <button
+                      onClick={() => {
+                        const next = new Set(likedComments)
+                        if (next.has(comment.id)) { next.delete(comment.id) } else { next.add(comment.id) }
+                        setLikedComments(next)
+                      }}
+                      className={`text-xs flex items-center gap-1 transition-colors ${likedComments.has(comment.id) ? 'text-red-500' : 'text-gray-400 hover:text-red-400'}`}
+                    >
+                      ❤️ {comment.likes + (likedComments.has(comment.id) ? 1 : 0)} 有用
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Sidebar */}
+        <div className="w-full lg:w-72 lg:flex-shrink-0 space-y-4">
+
+          {/* CTA: Reuse */}
+          <div className="bg-white rounded-2xl p-5 shadow-sm border lg:sticky top-20">
+            <div className="text-center mb-4">
+              <div className="text-3xl mb-2">⚡</div>
+              <div className="font-bold text-gray-900 mb-1">一键复用此链路</div>
+              <div className="text-xs text-gray-500">自动加载配置，直接开始执行</div>
+            </div>
+
+            <div className="space-y-2 mb-4">
+              {[
+                '自动打开小浣熊',
+                '加载示例文件',
+                '填充所有 Prompt',
+                '跳转执行页',
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-2 text-sm text-gray-600">
+                  <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold flex-shrink-0">{i + 1}</div>
+                  {item}
+                </div>
+              ))}
+            </div>
+
+            <button
+              onClick={handleReuse}
+              className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors"
+            >
+              立即复用
+            </button>
+            <button className="w-full mt-2 border text-gray-600 py-2.5 rounded-xl text-sm hover:bg-gray-50 transition-colors">
+              🔗 分享给他人
+            </button>
+
+            <div className="mt-3 pt-3 border-t text-center text-xs text-gray-400">
+              已有 <span className="text-blue-600 font-semibold">{caseData.reuses}</span> 人复用了此链路
+            </div>
+          </div>
+
+          {/* Case Stats */}
+          <div className="bg-white rounded-xl p-4 shadow-sm border">
+            <h3 className="font-semibold text-gray-900 mb-3">案例数据</h3>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-500">发布时间</span>
+                <span className="text-gray-700">{caseData.createdAt}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">最后更新</span>
+                <span className="text-gray-700">{caseData.updatedAt}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">复用次数</span>
+                <span className="text-blue-600 font-medium">{caseData.reuses}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">浏览量</span>
+                <span className="text-gray-700">{caseData.views}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">收藏数</span>
+                <span className="text-gray-700">{caseData.collects}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Related Cases */}
+          <div className="bg-white rounded-xl p-4 shadow-sm border">
+            <h3 className="font-semibold text-gray-900 mb-3">相关案例</h3>
+            <div className="space-y-2.5">
+              {caseData.related.map((r) => (
+                <Link
+                  key={r.id}
+                  href={`/community/cases/${r.id}`}
+                  className="block p-3 bg-gray-50 rounded-xl hover:bg-blue-50 transition-colors cursor-pointer"
+                >
+                  <div className="text-sm font-medium text-gray-800 line-clamp-2 mb-1">{r.title}</div>
+                  <div className="flex items-center gap-2 text-xs text-gray-400">
+                    <span>{r.industry}</span>
+                    <span>·</span>
+                    <span className="text-blue-500">⚡ {r.reuses} 次复用</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Reuse Modal */}
+      {showReuseModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center" onClick={() => { setShowReuseModal(false); setReuseStep(0) }}>
+          <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-lg font-bold text-gray-900 mb-4 text-center">⚡ 一键复用中...</h3>
+            <div className="space-y-3 mb-6">
+              {reuseSteps.map((s, i) => (
+                <div key={i} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${i < reuseStep ? 'bg-green-50 border border-green-100' : i === reuseStep ? 'bg-blue-50 border border-blue-200' : 'bg-gray-50 border border-transparent'}`}>
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xl flex-shrink-0 ${i < reuseStep ? 'bg-green-100' : i === reuseStep ? 'bg-blue-100' : 'bg-gray-100'}`}>
+                    {i < reuseStep ? '✅' : s.icon}
+                  </div>
+                  <span className={`text-sm font-medium ${i <= reuseStep ? 'text-gray-900' : 'text-gray-400'}`}>{s.label}</span>
+                  {i === reuseStep && reuseStep < reuseSteps.length && (
+                    <div className="ml-auto w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                  )}
+                </div>
+              ))}
+            </div>
+            {reuseStep >= reuseSteps.length ? (
+              <button onClick={() => { setShowReuseModal(false); setReuseStep(0) }} className="w-full bg-green-600 text-white py-3 rounded-xl font-semibold">
+                ✅ 已就绪，前往小浣熊执行
+              </button>
+            ) : (
+              <div className="text-center text-sm text-gray-400">正在自动配置，请稍候...</div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
