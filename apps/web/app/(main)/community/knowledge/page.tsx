@@ -5,151 +5,231 @@ import { useState } from 'react'
 const ALL_KBS = [
   {
     id: '1',
-    title: 'AI Prompt 工程实践库',
-    industry: '互联网',
-    tags: ['Prompt', 'AI', '模板', '提示工程'],
-    author: 'Prompt 工程师',
-    avatar: 'P',
-    docCount: 512,
-    fileTypes: ['Markdown', 'TXT'],
-    saves: 2341,
-    views: 8960,
-    likes: 412,
-    createdAt: '3天前',
+    title: '客服智能问答知识库',
+    industry: '通用',
+    tags: ['客服', '问答', 'FAQ', '话术'],
+    author: '小浣熊官方',
+    avatar: '🦝',
+    docCount: 186,
+    fileTypes: ['Word', 'PDF', 'Markdown'],
+    saves: 3421,
+    views: 12860,
+    likes: 624,
+    createdAt: '2周前',
     updatedAt: '1天前',
     isOfficial: true,
-    desc: '汇总 500+ 个经过验证的 Prompt 模板，涵盖文本处理、代码生成、数据分析等场景，持续更新维护。包含完整的使用说明和效果示例。',
-    preview: ['GPT 角色扮演模板集', '代码审查 Prompt 大全', '数据分析指令模板', '文案创作提示词', '翻译润色专用 Prompt'],
+    desc: '覆盖售前咨询、售后服务、投诉处理等场景的完整客服知识库。转存后，在小浣熊中 @ 本知识库，即可让 AI 自动回答用户问题，无需人工逐条查找。',
+    preview: [
+      '产品常见问题 FAQ.docx',
+      '退换货处理流程.pdf',
+      '投诉处理话术手册.docx',
+      '会员权益说明.pdf',
+      '售后服务标准 SOP.docx',
+      '客服绩效考核指引.xlsx',
+    ],
+    usagePattern: '@客服知识库 用户反映订单长时间未发货，请帮我起草一封安抚邮件',
+    linkedChains: ['工单自动分类链路', '客户满意度分析链路'],
+    pawSteps: ['Plan：识别用户问题类型', 'Analyze：检索知识库对应政策', 'Write：生成标准回复话术'],
   },
   {
     id: '2',
-    title: '电商运营知识库 · 完整版',
-    industry: '电商',
-    tags: ['选品', '广告', '数据分析', '客服'],
-    author: '张小明',
-    avatar: 'Z',
-    docCount: 236,
-    fileTypes: ['PDF', 'Excel', 'Word'],
-    saves: 1284,
-    views: 4820,
-    likes: 238,
-    createdAt: '1周前',
-    updatedAt: '2天前',
-    isOfficial: true,
-    desc: '涵盖选品策略、广告投放、数据分析、客服话术等 200+ 篇文档，适合电商团队日常运营参考。经过实际验证，可直接复用。',
-    preview: ['选品分析框架.xlsx', '广告投放 SOP.pdf', '客服话术大全.docx', '数据看板模板.xlsx', 'ROI 计算工具.xlsx'],
+    title: '合同审查与风险识别库',
+    industry: '法律',
+    tags: ['合同', '风险', '合规', '法务'],
+    author: '李律师',
+    avatar: 'L',
+    docCount: 214,
+    fileTypes: ['PDF', 'Word'],
+    saves: 1986,
+    views: 7240,
+    likes: 348,
+    createdAt: '3周前',
+    updatedAt: '3天前',
+    isOfficial: false,
+    desc: '收录了劳动合同、采购合同、服务协议等 20+ 种合同模板及对应的风险条款识别指南。配合小浣熊链路，可实现合同上传后自动标注高风险条款并给出修改建议。',
+    preview: [
+      '劳动合同风险条款清单.docx',
+      '采购合同审查要点.pdf',
+      '保密协议 NDA 标准版.docx',
+      '股权投资协议模板.docx',
+      '服务合同违约条款说明.pdf',
+      '合同合规自查 Checklist.xlsx',
+    ],
+    usagePattern: '@合同知识库 分析这份采购合同中哪些条款对我方不利，给出修改建议',
+    linkedChains: ['合同风险审查链路', '合规条款对比链路'],
+    pawSteps: ['Plan：确定合同类型和审查重点', 'Analyze：逐条对照知识库风险标准', 'Write：生成风险报告及修改建议'],
   },
   {
     id: '3',
-    title: '法律合规知识库 · 企业版',
-    industry: '法律',
-    tags: ['合同', '合规', '风险', '模板'],
-    author: '李律师',
-    avatar: 'L',
-    docCount: 158,
-    fileTypes: ['PDF', 'Word'],
-    saves: 986,
-    views: 3560,
-    likes: 176,
-    createdAt: '2周前',
-    updatedAt: '3天前',
-    isOfficial: false,
-    desc: '整理了劳动合同、保密协议、股权协议等常见法律文件模板及风险分析，适合法务和创业团队日常使用。',
-    preview: ['劳动合同模板（标准版）.docx', '股权投资协议.docx', '保密协议 NDA.docx', '合同风险审查清单.pdf', '企业合规自查手册.pdf'],
+    title: '产品需求文档资源库',
+    industry: '互联网',
+    tags: ['PRD', '需求', '产品设计', 'UX'],
+    author: '产品团队',
+    avatar: 'P',
+    docCount: 167,
+    fileTypes: ['Word', 'Markdown', 'PDF'],
+    saves: 2134,
+    views: 8960,
+    likes: 412,
+    createdAt: '1周前',
+    updatedAt: '2天前',
+    isOfficial: true,
+    desc: '包含 PRD 模板、用户故事卡、竞品分析框架、设计规范文档。利用小浣熊 PAW 三步法，配合本知识库可快速生成符合团队规范的需求文档。',
+    preview: [
+      'PRD 需求文档模板 v2.0.docx',
+      '用户故事卡模板.md',
+      '功能优先级评估矩阵.xlsx',
+      'UX 设计规范手册.pdf',
+      '竞品分析框架.docx',
+      '产品迭代复盘模板.md',
+    ],
+    usagePattern: '@产品知识库 基于用户反馈，帮我起草「消息通知中心」功能的 PRD，参考现有文档格式',
+    linkedChains: ['竞品分析报告生成链路', '用户需求拆解链路'],
+    pawSteps: ['Plan：拆解功能需求点', 'Analyze：参考知识库现有 PRD 结构', 'Write：生成完整 PRD 文档'],
   },
   {
     id: '4',
-    title: '金融分析师工具箱',
+    title: '财务分析与报表解读库',
     industry: '金融',
-    tags: ['财务', '估值', '研究', '模型'],
+    tags: ['财务', '报表', '分析', '指标'],
     author: '陈分析师',
     avatar: 'C',
     docCount: 189,
     fileTypes: ['Excel', 'PDF'],
-    saves: 743,
-    views: 2840,
-    likes: 152,
-    createdAt: '1周前',
+    saves: 1743,
+    views: 5840,
+    likes: 296,
+    createdAt: '2周前',
     updatedAt: '4天前',
     isOfficial: false,
-    desc: '包含财务分析框架、DCF 估值模型、行业研究模板、数据处理脚本等，适合投研和财务分析师使用。',
-    preview: ['DCF 估值模型.xlsx', '财务三表分析框架.xlsx', '行业研究报告模板.docx', '风险评估矩阵.xlsx', '财务指标速查手册.pdf'],
+    desc: '包含财务三表解读指南、关键指标计算公式、DCF 估值模型、行业基准对比数据。上传财务报表后，小浣熊可参考本知识库自动生成分析报告。',
+    preview: [
+      '财务三表快速解读手册.pdf',
+      'DCF 估值模型.xlsx',
+      '财务指标速查表.xlsx',
+      '异常指标预警规则.docx',
+      '行业财务基准数据.xlsx',
+      '季报撰写规范指引.docx',
+    ],
+    usagePattern: '@财务知识库 上传的是 Q3 财报，请分析主要财务指标变化趋势并标注异常项',
+    linkedChains: ['季报智能分析链路', '财务异常检测链路'],
+    pawSteps: ['Plan：确定分析维度（盈利/偿债/运营/成长）', 'Analyze：对比知识库行业基准数据', 'Write：生成含结论的财务分析报告'],
   },
   {
     id: '5',
-    title: '医疗健康文档资源库',
-    industry: '医疗',
-    tags: ['病历', '临床', '规范', '指南'],
-    author: '王医生',
-    avatar: 'W',
-    docCount: 124,
-    fileTypes: ['PDF', 'Word'],
-    saves: 612,
-    views: 2130,
-    likes: 98,
-    createdAt: '2周前',
-    updatedAt: '5天前',
-    isOfficial: false,
-    desc: '收录常见疾病诊疗规范、病历书写标准、药物说明及临床指南，方便医疗从业者快速查阅和使用。',
-    preview: ['病历书写规范.pdf', '常见疾病诊疗流程.pdf', '药物相互作用速查.docx', '手术知情同意书模板.docx', '护理记录表模板.docx'],
+    title: '电商运营全场景知识库',
+    industry: '电商',
+    tags: ['选品', '广告', '数据分析', '运营'],
+    author: '张小明',
+    avatar: 'Z',
+    docCount: 243,
+    fileTypes: ['Excel', 'PDF', 'Word'],
+    saves: 2284,
+    views: 9120,
+    likes: 502,
+    createdAt: '1个月前',
+    updatedAt: '2天前',
+    isOfficial: true,
+    desc: '覆盖选品分析、广告投放、活动策划、数据复盘的完整运营知识体系。配套多条小浣熊链路，可直接用于日报/周报自动生成、广告效果分析。',
+    preview: [
+      '选品分析 SOP.pdf',
+      '广告投放 ROI 计算模板.xlsx',
+      '大促活动策划手册.docx',
+      '数据日报自动化模板.xlsx',
+      '竞品价格监控规则.docx',
+      '用户评论情感分析指南.md',
+    ],
+    usagePattern: '@运营知识库 根据本周销售数据，帮我生成运营周报，重点分析 ROI 下降原因',
+    linkedChains: ['销售数据日报链路', '用户评论批量分析链路', '活动效果复盘链路'],
+    pawSteps: ['Plan：确定报告周期和数据范围', 'Analyze：参照知识库指标体系解读数据', 'Write：生成图文并茂的运营报告'],
   },
   {
     id: '6',
-    title: '教育培训课程资料库',
-    industry: '教育',
-    tags: ['课件', '教案', '题库', '培训'],
-    author: '教育达人',
-    avatar: 'J',
-    docCount: 203,
-    fileTypes: ['PPT', 'PDF', 'Word'],
-    saves: 834,
-    views: 3210,
-    likes: 165,
+    title: '医疗文书规范知识库',
+    industry: '医疗',
+    tags: ['病历', '医嘱', '规范', '临床'],
+    author: '王医生',
+    avatar: 'W',
+    docCount: 128,
+    fileTypes: ['PDF', 'Word'],
+    saves: 912,
+    views: 3450,
+    likes: 198,
     createdAt: '3周前',
-    updatedAt: '1周前',
-    isOfficial: true,
-    desc: '包含 K12 到职场培训的多种课件、教案模板和题库，支持一键导入，快速搭建自己的课程体系。',
-    preview: ['Python 入门课件.pptx', '职场沟通技巧教案.docx', '数学题库（初中版）.pdf', '培训效果评估表.xlsx', '学员反馈问卷.docx'],
+    updatedAt: '5天前',
+    isOfficial: false,
+    desc: '收录病历书写规范、常见病诊疗路径、医嘱模板、知情同意书等临床文书。转存后可让小浣熊参考规范自动结构化病历文本，节省医生书写时间。',
+    preview: [
+      '病历书写质控标准.pdf',
+      '常见疾病诊疗路径.pdf',
+      '手术知情同意书模板.docx',
+      '护理记录书写规范.docx',
+      '药物使用说明速查.pdf',
+      '出院小结模板.docx',
+    ],
+    usagePattern: '@医疗知识库 将以下口述病历内容整理为符合规范的电子病历格式',
+    linkedChains: ['病历结构化提取链路', '出院小结生成链路'],
+    pawSteps: ['Plan：识别病历关键信息字段', 'Analyze：对照书写规范检查完整性', 'Write：输出结构化标准病历'],
   },
   {
     id: '7',
-    title: '互联网产品设计知识库',
+    title: '代码审查与研发规范库',
     industry: '互联网',
-    tags: ['产品', 'UX', '设计规范', '竞品'],
-    author: '产品团队',
-    avatar: 'P',
-    docCount: 167,
-    fileTypes: ['PDF', 'Markdown'],
-    saves: 921,
-    views: 3740,
-    likes: 208,
-    createdAt: '1周前',
-    updatedAt: '2天前',
+    tags: ['代码规范', '安全', 'Code Review', '研发'],
+    author: '技术负责人',
+    avatar: 'T',
+    docCount: 156,
+    fileTypes: ['Markdown', 'PDF'],
+    saves: 1654,
+    views: 6320,
+    likes: 334,
+    createdAt: '2周前',
+    updatedAt: '1天前',
     isOfficial: false,
-    desc: '汇集产品需求文档模板、UX 设计规范、竞品分析框架、用户访谈指南等，适合产品和设计团队使用。',
-    preview: ['PRD 需求文档模板.docx', 'UX 设计规范手册.pdf', '竞品分析框架.xlsx', '用户访谈指南.docx', '产品迭代复盘模板.docx'],
+    desc: '包含前后端编码规范、安全漏洞检查项、Code Review 评审标准、API 设计指南。小浣熊代码模式下 @ 本库，可自动对照规范完成代码审查。',
+    preview: [
+      '前端编码规范 v3.0.md',
+      '后端 API 设计指南.md',
+      '安全漏洞检查清单（OWASP）.pdf',
+      'Code Review 评审标准.md',
+      'SQL 查询优化规范.md',
+      '单元测试覆盖率要求.md',
+    ],
+    usagePattern: '@研发规范库 对这段 Python 代码做 Code Review，重点检查安全问题和规范符合性',
+    linkedChains: ['代码安全扫描链路', 'PR 自动评审链路'],
+    pawSteps: ['Plan：明确审查维度（安全/性能/规范）', 'Analyze：逐条对照规范文档检查', 'Write：生成评审意见和改进建议'],
   },
   {
     id: '8',
-    title: '制造业生产管理知识库',
-    industry: '制造业',
-    tags: ['生产', '质量', 'SOP', '6Sigma'],
-    author: '工厂管理员',
-    avatar: 'G',
-    docCount: 98,
-    fileTypes: ['Excel', 'PDF', 'Word'],
-    saves: 384,
-    views: 1450,
-    likes: 67,
-    createdAt: '1个月前',
-    updatedAt: '2周前',
-    isOfficial: false,
-    desc: '涵盖生产计划、质量管理（6Sigma/ISO）、设备维护 SOP、安全规程等文档，适合制造企业管理人员。',
-    preview: ['生产日报表模板.xlsx', '质量检验 SOP.pdf', '设备点检表.xlsx', '安全操作规程.docx', '6Sigma 项目模板.pptx'],
+    title: '市场营销内容素材库',
+    industry: '通用',
+    tags: ['营销', '文案', '品牌', '内容创作'],
+    author: '市场团队',
+    avatar: 'M',
+    docCount: 312,
+    fileTypes: ['Word', 'Markdown', 'PDF'],
+    saves: 1834,
+    views: 7640,
+    likes: 428,
+    createdAt: '1周前',
+    updatedAt: '12小时前',
+    isOfficial: true,
+    desc: '汇集品牌手册、文案风格指南、历史爆款案例、各渠道内容模板。转存后让小浣熊参考品牌调性自动生成符合风格的营销内容，保持品牌一致性。',
+    preview: [
+      '品牌视觉与文案风格指南.pdf',
+      '微信公众号推文模板集.docx',
+      '小红书种草文案公式.md',
+      '抖音脚本写作框架.docx',
+      '历史爆款案例分析.xlsx',
+      '活动策划文案模板库.docx',
+    ],
+    usagePattern: '@营销知识库 参考品牌风格，为新品发布写一篇小红书种草文案，突出 AI 办公场景',
+    linkedChains: ['多平台内容批量生成链路', '爆款文案分析链路'],
+    pawSteps: ['Plan：确定目标平台和受众', 'Analyze：参考知识库爆款案例和品牌调性', 'Write：生成符合平台规范的营销内容'],
   },
 ]
 
-const INDUSTRIES = ['全部', '互联网', '电商', '金融', '医疗', '法律', '教育', '制造业', '零售']
+const INDUSTRIES = ['全部', '通用', '互联网', '电商', '金融', '医疗', '法律']
 const SORT_OPTIONS = ['最多转存', '最新发布', '最多点赞', '最多浏览']
 
 function SaveModal({ kb, onClose }: { kb: typeof ALL_KBS[0]; onClose: () => void }) {
@@ -185,7 +265,7 @@ function SaveModal({ kb, onClose }: { kb: typeof ALL_KBS[0]; onClose: () => void
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl">×</button>
         </div>
 
-        <div className="bg-emerald-50 rounded-xl p-4 mb-5">
+        <div className="bg-emerald-50 rounded-xl p-4 mb-4">
           <p className="text-sm font-semibold text-gray-800 mb-1">{kb.title}</p>
           <p className="text-xs text-gray-500 mb-2">{kb.docCount} 篇文档 · {kb.fileTypes.join('、')}</p>
           <div className="flex gap-2 flex-wrap">
@@ -195,11 +275,17 @@ function SaveModal({ kb, onClose }: { kb: typeof ALL_KBS[0]; onClose: () => void
           </div>
         </div>
 
+        {/* Usage hint */}
+        <div className="bg-blue-50 rounded-xl p-3 mb-4">
+          <p className="text-xs font-medium text-blue-700 mb-1">💡 转存后在小浣熊中这样使用：</p>
+          <p className="text-xs text-blue-600 font-mono break-all">{kb.usagePattern}</p>
+        </div>
+
         <div className="space-y-3 mb-5">
           {steps.map((s, i) => (
             <div
               key={i}
-              className={`flex items-center gap-3 p-3 rounded-xl transition-all ${i <= step && (done || i < step || step === i) ? 'bg-emerald-50 border border-emerald-100' : 'bg-gray-50 border border-transparent'}`}
+              className={`flex items-center gap-3 p-3 rounded-xl transition-all ${i <= step ? 'bg-emerald-50 border border-emerald-100' : 'bg-gray-50 border border-transparent'}`}
             >
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-lg flex-shrink-0 ${done && i <= step ? 'bg-emerald-100' : i === step && !done ? 'bg-blue-100' : i < step ? 'bg-emerald-100' : 'bg-gray-100'}`}>
                 {i < step ? '✅' : s.icon}
@@ -224,7 +310,7 @@ function SaveModal({ kb, onClose }: { kb: typeof ALL_KBS[0]; onClose: () => void
             onClick={onClose}
             className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors"
           >
-            ✅ 转存完成，前往我的知识库
+            ✅ 转存完成，前往小浣熊使用
           </button>
         ) : (
           <div className="w-full bg-gray-100 text-gray-400 py-3 rounded-xl font-semibold text-center">
@@ -232,7 +318,7 @@ function SaveModal({ kb, onClose }: { kb: typeof ALL_KBS[0]; onClose: () => void
           </div>
         )}
         <p className="text-xs text-center text-gray-400 mt-3">
-          转存后可在「我的知识库」中独立编辑和使用
+          转存后可在「我的知识库」中独立编辑，并在小浣熊任务中通过 @ 引用
         </p>
       </div>
     </div>
@@ -270,9 +356,21 @@ export default function KnowledgePage() {
               <span>已有 318 个知识库共享，本周新增 24 个</span>
             </div>
             <h2 className="text-2xl font-bold mb-1">共享知识库广场</h2>
-            <p className="text-emerald-100 text-sm">
-              发现并转存优质知识库，一键复制到你的工作空间，开箱即用
+            <p className="text-emerald-100 text-sm mb-4">
+              发现并转存优质知识库，在小浣熊中通过 <code className="bg-white/20 px-1.5 py-0.5 rounded text-xs">@知识库名</code> 即可引用，开箱即用
             </p>
+            <div className="flex flex-wrap gap-3 text-xs">
+              {[
+                { icon: '📥', text: '一键转存到个人空间' },
+                { icon: '@', text: '小浣熊任务中直接引用' },
+                { icon: '🔗', text: '配套链路快速复用' },
+              ].map((item) => (
+                <div key={item.text} className="flex items-center gap-1.5 bg-white/15 rounded-full px-3 py-1">
+                  <span>{item.icon}</span>
+                  <span>{item.text}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Filters */}
@@ -325,57 +423,81 @@ export default function KnowledgePage() {
               return (
                 <div key={kb.id} className="bg-white rounded-xl shadow-sm border overflow-hidden hover:shadow-md transition-shadow">
                   <div className="p-5">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1 min-w-0">
-                        {/* Tags row */}
-                        <div className="flex items-center gap-2 mb-2 flex-wrap">
-                          <span className="text-xs bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full font-medium">{kb.industry}</span>
-                          {kb.isOfficial && (
-                            <span className="text-xs bg-amber-50 text-amber-600 px-2 py-0.5 rounded-full font-medium">官方推荐</span>
-                          )}
-                          <span className="text-xs text-gray-400">{kb.updatedAt} 更新</span>
-                        </div>
-
-                        <h3 className="text-lg font-semibold text-gray-900 mb-1">{kb.title}</h3>
-                        <p className="text-sm text-gray-500 mb-3">{kb.desc}</p>
-
-                        {/* Tags */}
-                        <div className="flex gap-2 flex-wrap mb-3">
-                          {kb.tags.map((tag) => (
-                            <span key={tag} className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">#{tag}</span>
-                          ))}
-                        </div>
-
-                        {/* Meta */}
-                        <div className="flex items-center gap-4 text-xs text-gray-400 mb-3">
-                          <span>📄 {kb.docCount} 篇文档</span>
-                          <span>📁 {kb.fileTypes.join(' / ')}</span>
-                        </div>
-
-                        {/* Preview Collapsed/Expanded */}
-                        {isExpanded && (
-                          <div className="bg-gray-50 rounded-xl p-3 mb-3">
-                            <p className="text-xs font-medium text-gray-700 mb-2">文档预览（部分）</p>
-                            <ul className="space-y-1.5">
-                              {kb.preview.map((doc, i) => (
-                                <li key={i} className="flex items-center gap-2 text-sm text-gray-600">
-                                  <span className="text-gray-300">📄</span>
-                                  {doc}
-                                </li>
-                              ))}
-                              <li className="text-xs text-gray-400 pt-1">...共 {kb.docCount} 篇</li>
-                            </ul>
-                          </div>
-                        )}
-                      </div>
+                    {/* Tags row */}
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
+                      <span className="text-xs bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full font-medium">{kb.industry}</span>
+                      {kb.isOfficial && (
+                        <span className="text-xs bg-amber-50 text-amber-600 px-2 py-0.5 rounded-full font-medium">官方推荐</span>
+                      )}
+                      <span className="text-xs text-gray-400">{kb.updatedAt} 更新</span>
                     </div>
 
+                    <h3 className="text-lg font-semibold text-gray-900 mb-1">{kb.title}</h3>
+                    <p className="text-sm text-gray-500 mb-3">{kb.desc}</p>
+
+                    {/* Tags */}
+                    <div className="flex gap-2 flex-wrap mb-3">
+                      {kb.tags.map((tag) => (
+                        <span key={tag} className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">#{tag}</span>
+                      ))}
+                    </div>
+
+                    {/* Usage Pattern */}
+                    <div className="bg-blue-50 rounded-lg px-3 py-2 mb-3">
+                      <span className="text-xs font-medium text-blue-700">小浣熊使用示例：</span>
+                      <p className="text-xs text-blue-600 font-mono mt-0.5 break-all">{kb.usagePattern}</p>
+                    </div>
+
+                    {/* Linked Chains */}
+                    <div className="flex items-center gap-2 mb-3 flex-wrap">
+                      <span className="text-xs text-gray-400">配套链路：</span>
+                      {kb.linkedChains.map((chain) => (
+                        <span key={chain} className="text-xs bg-violet-50 text-violet-600 px-2 py-0.5 rounded-full">⚡ {chain}</span>
+                      ))}
+                    </div>
+
+                    {/* Meta */}
+                    <div className="flex items-center gap-4 text-xs text-gray-400 mb-3">
+                      <span>📄 {kb.docCount} 篇文档</span>
+                      <span>📁 {kb.fileTypes.join(' / ')}</span>
+                    </div>
+
+                    {/* Preview Collapsed/Expanded */}
+                    {isExpanded && (
+                      <div className="bg-gray-50 rounded-xl p-4 mb-3 space-y-3">
+                        {/* PAW Steps */}
+                        <div>
+                          <p className="text-xs font-semibold text-gray-700 mb-2">PAW 三步法使用指引</p>
+                          <div className="flex flex-col sm:flex-row gap-2">
+                            {kb.pawSteps.map((step, i) => (
+                              <div key={i} className={`flex-1 rounded-lg px-3 py-2 text-xs ${i === 0 ? 'bg-blue-50 text-blue-700' : i === 1 ? 'bg-violet-50 text-violet-700' : 'bg-emerald-50 text-emerald-700'}`}>
+                                {step}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                        {/* Doc Preview */}
+                        <div>
+                          <p className="text-xs font-semibold text-gray-700 mb-2">文档目录（部分）</p>
+                          <ul className="space-y-1.5">
+                            {kb.preview.map((doc, i) => (
+                              <li key={i} className="flex items-center gap-2 text-sm text-gray-600">
+                                <span className="text-gray-300">📄</span>
+                                {doc}
+                              </li>
+                            ))}
+                            <li className="text-xs text-gray-400 pt-1">...共 {kb.docCount} 篇</li>
+                          </ul>
+                        </div>
+                      </div>
+                    )}
+
                     {/* Actions */}
-                    <div className="flex items-center justify-between mt-1">
+                    <div className="flex items-center justify-between mt-1 flex-wrap gap-3">
                       <div className="flex items-center gap-3">
                         <div className="flex items-center gap-2">
                           <div className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-400 to-blue-400 flex items-center justify-center text-white text-xs font-bold">
-                            {kb.avatar}
+                            {typeof kb.avatar === 'string' && kb.avatar.length > 1 ? kb.avatar : kb.avatar}
                           </div>
                           <span className="text-sm text-gray-600">{kb.author}</span>
                         </div>
@@ -390,7 +512,7 @@ export default function KnowledgePage() {
                           onClick={() => setExpandedId(isExpanded ? null : kb.id)}
                           className="text-sm text-gray-500 px-3 py-1.5 rounded-lg border hover:bg-gray-50 transition-colors"
                         >
-                          {isExpanded ? '收起' : '预览目录'}
+                          {isExpanded ? '收起' : '查看详情'}
                         </button>
                         <button className="text-sm text-gray-500 px-3 py-1.5 rounded-lg border hover:bg-gray-50 transition-colors">
                           🔗 分享
@@ -418,12 +540,59 @@ export default function KnowledgePage() {
 
         {/* Sidebar */}
         <div className="w-full lg:w-64 lg:flex-shrink-0 space-y-4 hidden lg:block">
+          {/* How to use */}
+          <div className="bg-white rounded-xl p-4 shadow-sm border">
+            <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+              <span>🚀</span> 如何使用知识库
+            </h3>
+            <div className="space-y-3">
+              {[
+                { step: '1', title: '转存知识库', desc: '点击「一键转存」复制到你的空间' },
+                { step: '2', title: '在小浣熊中引用', desc: '输入 @ 选择对应知识库' },
+                { step: '3', title: '执行 AI 任务', desc: 'AI 自动参考知识库内容完成任务' },
+              ].map((item) => (
+                <div key={item.step} className="flex gap-3">
+                  <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold flex items-center justify-center flex-shrink-0">
+                    {item.step}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-800">{item.title}</p>
+                    <p className="text-xs text-gray-500">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* PAW Method */}
+          <div className="bg-gradient-to-br from-blue-50 to-violet-50 rounded-xl p-4 border border-blue-100">
+            <h3 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+              <span>🐾</span> PAW 三步法
+            </h3>
+            <p className="text-xs text-gray-500 mb-3">小浣熊推荐的知识库使用方法</p>
+            <div className="space-y-2">
+              {[
+                { letter: 'P', word: 'Plan', desc: '明确任务目标和范围', color: 'bg-blue-100 text-blue-700' },
+                { letter: 'A', word: 'Analyze', desc: '参考知识库分析现状', color: 'bg-violet-100 text-violet-700' },
+                { letter: 'W', word: 'Write', desc: '生成符合规范的输出', color: 'bg-emerald-100 text-emerald-700' },
+              ].map((item) => (
+                <div key={item.letter} className="flex items-start gap-2">
+                  <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${item.color} flex-shrink-0`}>{item.letter}</span>
+                  <div>
+                    <span className="text-xs font-medium text-gray-700">{item.word}</span>
+                    <span className="text-xs text-gray-500 ml-1">— {item.desc}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Publish */}
           <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl p-5 text-white">
             <h3 className="font-semibold mb-2 flex items-center gap-2">
               <span>📤</span> 共享知识库
             </h3>
-            <p className="text-sm text-emerald-100 mb-3">将你的知识库共享给社区，帮助更多人，同时获取积分奖励。</p>
+            <p className="text-sm text-emerald-100 mb-3">将你的知识库共享给社区，同时获取积分奖励。</p>
             <div className="space-y-1.5 text-sm text-emerald-100 mb-4">
               <div className="flex justify-between">
                 <span>发布知识库</span>
@@ -441,49 +610,6 @@ export default function KnowledgePage() {
             <button className="w-full bg-white text-emerald-600 font-semibold py-2 rounded-lg hover:bg-emerald-50 transition-colors text-sm">
               + 共享我的知识库
             </button>
-          </div>
-
-          {/* Hot Industries */}
-          <div className="bg-white rounded-xl p-4 shadow-sm border">
-            <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-              <span>🔥</span> 热门行业
-            </h3>
-            <div className="space-y-2.5">
-              {[
-                { name: '互联网', count: 89, icon: '💻' },
-                { name: '电商', count: 67, icon: '🛒' },
-                { name: '金融', count: 54, icon: '💰' },
-                { name: '法律', count: 42, icon: '⚖️' },
-                { name: '教育', count: 38, icon: '📚' },
-              ].map((item, i) => (
-                <div
-                  key={item.name}
-                  onClick={() => setIndustry(item.name)}
-                  className="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-1.5 rounded-lg transition-colors"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-gray-400">{i + 1}</span>
-                    <span className="text-lg">{item.icon}</span>
-                    <span className="text-sm text-gray-700">{item.name}</span>
-                  </div>
-                  <span className="text-xs text-gray-400">{item.count} 个</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Tips */}
-          <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-            <h3 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
-              <span>💡</span> 使用建议
-            </h3>
-            <ul className="text-xs text-gray-600 space-y-1.5">
-              <li>• 转存后的知识库独立于原版</li>
-              <li>• 可自由添加、删除、修改文档</li>
-              <li>• 支持导入到小浣熊任务使用</li>
-              <li>• 点击「预览目录」查看文档列表</li>
-              <li>• 分享给同事可一起使用</li>
-            </ul>
           </div>
 
           {/* My Saved */}
