@@ -275,14 +275,14 @@ export default function CommunityHomePage() {
           {/* Industry Quick Entry */}
           <div className="bg-white rounded-xl p-5 shadow-sm border mb-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-gray-900">行业入口</h3>
-              <Link href="/community/cases" className="text-sm text-blue-600 hover:underline">查看全部 →</Link>
+              <h3 className="font-semibold text-gray-900">行业圈子</h3>
+              <Link href="/community/members" className="text-sm text-blue-600 hover:underline">全部圈子 →</Link>
             </div>
             <div className="grid grid-cols-4 gap-2 sm:gap-3">
               {INDUSTRIES.map((ind) => (
                 <Link
                   key={ind.name}
-                  href={`/community/cases?industry=${ind.name}`}
+                  href={`/community/industry/${encodeURIComponent(ind.name)}`}
                   className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-gray-50 hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all cursor-pointer"
                 >
                   <span className="text-2xl">{ind.icon}</span>

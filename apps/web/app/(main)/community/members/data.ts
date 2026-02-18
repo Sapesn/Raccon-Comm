@@ -103,6 +103,36 @@ export const INDUSTRY_CIRCLES: Record<string, IndustryCircle> = {
     group: { type: 'wechat', label: '法律科技交流群', note: '扫码加入微信群' },
     topics: ['合同风险识别', '判决书摘要', '法律文书生成', '尽调报告', 'LegalTech'],
   },
+  '教育': {
+    industry: '教育',
+    icon: '📚',
+    gradient: 'from-violet-500 to-purple-600',
+    desc: '教育 AI 应用探索者圈子，教案生成、个性化学习路径、批改辅助等场景的真实落地经验。',
+    memberCount: 540,
+    caseCount: 126,
+    group: { type: 'wechat', label: '教育 AI 实践群', note: '扫码加入微信群' },
+    topics: ['教案生成', '个性化辅导', '题库构建', 'AI 批改', '学情分析'],
+  },
+  '制造业': {
+    industry: '制造业',
+    icon: '🏭',
+    gradient: 'from-slate-500 to-gray-700',
+    desc: '制造业智能化先行者，生产调度、质检报告、设备维护、供应链分析等场景 AI 落地实践。',
+    memberCount: 320,
+    caseCount: 74,
+    group: { type: 'wechat', label: '制造 AI 交流群', note: '扫码加入微信群' },
+    topics: ['生产排程', '质检报告', '设备预测维护', '供应链分析', '工艺优化'],
+  },
+  '零售': {
+    industry: '零售',
+    icon: '🏪',
+    gradient: 'from-rose-500 to-pink-600',
+    desc: '新零售 AI 实践圈，导购推荐、选品决策、库存预测、门店运营智能化案例一网打尽。',
+    memberCount: 410,
+    caseCount: 89,
+    group: { type: 'wechat', label: '零售 AI 实践群', note: '扫码加入微信群' },
+    topics: ['智能导购', '选品预测', '库存优化', '促销分析', '门店数字化'],
+  },
 }
 
 export const IDENTITY_MAP: Record<string, { label: string; color: string; bg: string; desc: string; icon: string }> = {
