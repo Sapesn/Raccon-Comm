@@ -429,12 +429,14 @@ export default function BlogWritePage() {
                 </label>
                 <textarea
                   value={excerpt}
-                  onChange={(e) => setExcerpt(e.target.value)}
+                  onChange={(e) => setExcerpt(e.target.value.slice(0, 200))}
                   placeholder="用 1-2 句话概括文章的核心内容..."
                   className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 resize-none"
                   rows={3}
                 />
-                <p className="text-xs text-gray-400 mt-1">{excerpt.length} / 200</p>
+                <p className={`text-xs mt-1 ${excerpt.length >= 200 ? 'text-red-500' : 'text-gray-400'}`}>
+                  {excerpt.length} / 200{excerpt.length >= 200 ? ' · 已达上限' : ''}
+                </p>
               </div>
 
               <div>

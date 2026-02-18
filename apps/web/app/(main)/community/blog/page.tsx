@@ -59,20 +59,23 @@ export default function BlogPage() {
             {/* Filters */}
             <div className="flex items-center gap-3 mb-4 flex-wrap">
               {/* Category Tabs */}
-              <div className="flex gap-1.5 overflow-x-auto pb-0.5 flex-1">
-                {BLOG_CATEGORIES.map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setActiveCategory(cat)}
-                    className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                      activeCategory === cat
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                ))}
+              <div className="relative flex-1 min-w-0">
+                <div className="flex gap-1.5 overflow-x-auto pb-0.5 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                  {BLOG_CATEGORIES.map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => setActiveCategory(cat)}
+                      className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                        activeCategory === cat
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+                <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#f5f7fa] to-transparent" />
               </div>
 
               {/* Sort */}

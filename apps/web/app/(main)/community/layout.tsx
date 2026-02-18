@@ -3,24 +3,39 @@
 import type { ReactNode } from 'react'
 import { useState } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { UNREAD_COUNT } from './messages/data'
 
 const mainTabs = [
   { href: '/community', label: '首页', exact: true },
   { href: '/community/cases', label: '案例' },
   { href: '/community/knowledge', label: '知识库' },
+  { href: '/community/blog', label: '博客' },
   { href: '/community/discuss', label: '讨论' },
   { href: '/community/raccoon', label: '🦝 浣熊园' },
 ]
 
 const moreTabs = [
-  { href: '/community/blog', label: '博客', icon: '✍️' },
   { href: '/community/members', label: '用户榜单', icon: '👥' },
   { href: '/community/events', label: '社区活动', icon: '🗓️' },
   { href: '/community/honors', label: '荣誉室', icon: '🏆' },
   { href: '/community/feedback', label: '产品反馈', icon: '💭' },
   { href: '/community/guide', label: '使用指南', icon: '📖' },
+]
+
+const publishOptions = [
+  {
+    href: '/community/cases/publish',
+    label: '发布案例',
+    desc: '分享可一键复用的工作流',
+    icon: '📂',
+  },
+  {
+    href: '/community/blog/write',
+    label: '写博客',
+    desc: '发布深度文章与行业洞察',
+    icon: '✍️',
+  },
 ]
 
 const profileMenu = [
@@ -30,9 +45,11 @@ const profileMenu = [
 
 export default function CommunityLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname()
+  const router = useRouter()
   const [menuOpen, setMenuOpen] = useState(false)
   const [moreOpen, setMoreOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
+  const [publishOpen, setPublishOpen] = useState(false)
 
   const isMoreActive = moreTabs.some((t) => pathname.startsWith(t.href))
 
@@ -130,9 +147,37 @@ export default function CommunityLayout({ children }: { children: ReactNode }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
-            <Link href="/community/cases/publish" className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-full hover:bg-blue-700 transition-colors whitespace-nowrap">
-              + 发布
-            </Link>
+
+            {/* Publish Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setPublishOpen(!publishOpen)}
+                onBlur={() => setTimeout(() => setPublishOpen(false), 150)}
+                className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-full hover:bg-blue-700 transition-colors whitespace-nowrap flex items-center gap-1"
+              >
+                + 发布
+                <svg className={`w-3 h-3 transition-transform ${publishOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {publishOpen && (
+                <div className="absolute top-full right-0 mt-1.5 w-52 bg-white rounded-xl shadow-lg border py-1.5 z-50">
+                  {publishOptions.map((opt) => (
+                    <Link
+                      key={opt.href}
+                      href={opt.href}
+                      className="flex items-start gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors"
+                    >
+                      <span className="text-lg mt-0.5">{opt.icon}</span>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">{opt.label}</p>
+                        <p className="text-xs text-gray-400">{opt.desc}</p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
 
             {/* Profile avatar dropdown */}
             <div className="relative">
@@ -166,9 +211,32 @@ export default function CommunityLayout({ children }: { children: ReactNode }) {
 
           {/* Mobile Right Actions */}
           <div className="flex md:hidden items-center gap-2">
-            <Link href="/community/cases/publish" className="bg-blue-600 text-white text-xs px-3 py-1.5 rounded-full hover:bg-blue-700 transition-colors whitespace-nowrap">
-              + 发布
-            </Link>
+            <div className="relative">
+              <button
+                onClick={() => setPublishOpen(!publishOpen)}
+                onBlur={() => setTimeout(() => setPublishOpen(false), 150)}
+                className="bg-blue-600 text-white text-xs px-3 py-1.5 rounded-full hover:bg-blue-700 transition-colors whitespace-nowrap"
+              >
+                + 发布
+              </button>
+              {publishOpen && (
+                <div className="absolute top-full right-0 mt-1.5 w-48 bg-white rounded-xl shadow-lg border py-1.5 z-50">
+                  {publishOptions.map((opt) => (
+                    <Link
+                      key={opt.href}
+                      href={opt.href}
+                      className="flex items-start gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors"
+                    >
+                      <span className="text-base mt-0.5">{opt.icon}</span>
+                      <div>
+                        <p className="text-xs font-medium text-gray-900">{opt.label}</p>
+                        <p className="text-xs text-gray-400">{opt.desc}</p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"

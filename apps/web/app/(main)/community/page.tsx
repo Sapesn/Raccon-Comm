@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { BLOG_ARTICLES } from './blog/data'
 
 const FEATURED_KBS = [
   {
@@ -490,25 +491,28 @@ export default function CommunityHomePage() {
             </Link>
           </div>
 
-          {/* Points Guide */}
-          <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-100">
-            <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-              <span>✨</span> 积分获取
+          {/* Latest Blog */}
+          <div className="bg-white rounded-xl p-5 shadow-sm border">
+            <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2 text-sm">
+              <span>✍️</span> 最新博客
             </h3>
-            <div className="space-y-2 text-sm">
-              {[
-                { action: '发布案例', points: '+100' },
-                { action: '被官方推荐', points: '+300' },
-                { action: '案例被复用', points: '+200' },
-                { action: '反馈被采纳', points: '+200' },
-                { action: '每日签到', points: '+5' },
-              ].map((item) => (
-                <div key={item.action} className="flex items-center justify-between">
-                  <span className="text-gray-600">{item.action}</span>
-                  <span className="font-semibold text-amber-600">{item.points}</span>
-                </div>
+            <div className="space-y-3">
+              {BLOG_ARTICLES.slice(0, 3).map((a) => (
+                <Link key={a.id} href={`/community/blog/${a.id}`} className="block group">
+                  <p className="text-sm text-gray-700 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug mb-1">
+                    {a.title}
+                  </p>
+                  <div className="flex items-center gap-2 text-xs text-gray-400">
+                    <span>{a.author}</span>
+                    <span>·</span>
+                    <span>👁 {a.views.toLocaleString()}</span>
+                  </div>
+                </Link>
               ))}
             </div>
+            <Link href="/community/blog" className="block text-center text-xs text-blue-600 mt-3 hover:underline">
+              查看全部博客 →
+            </Link>
           </div>
 
           {/* Feedback Quick Entry */}

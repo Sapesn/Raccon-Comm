@@ -5,6 +5,59 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { BLOG_ARTICLES, type ContentBlock } from '../data'
 
+function detectLang(code: string): string {
+  if (code.trimStart().startsWith('#')) return 'Shell / Prompt'
+  if (code.includes('def ') || code.includes('import ') && code.includes(':')) return 'Python'
+  if (code.includes('function ') || code.includes('const ') || code.includes('=>')) return 'JavaScript'
+  if (code.includes('<') && code.includes('/>')) return 'JSX'
+  if (code.includes('SELECT ') || code.includes('FROM ')) return 'SQL'
+  if (code.includes('|') && code.includes('---')) return 'Markdown'
+  return '代码'
+}
+
+function CodeBlock({ content }: { content: string }) {
+  const [copied, setCopied] = useState(false)
+  const lang = detectLang(content)
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(content).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
+
+  return (
+    <div className="my-4 rounded-lg overflow-hidden border border-gray-800">
+      <div className="flex items-center justify-between bg-gray-800 px-4 py-2">
+        <span className="text-xs text-gray-400 font-medium">{lang}</span>
+        <button
+          onClick={handleCopy}
+          className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors"
+        >
+          {copied ? (
+            <>
+              <svg className="w-3.5 h-3.5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              <span className="text-green-400">已复制</span>
+            </>
+          ) : (
+            <>
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+              复制
+            </>
+          )}
+        </button>
+      </div>
+      <pre className="bg-gray-900 text-green-400 text-xs p-4 overflow-x-auto font-mono">
+        <code>{content}</code>
+      </pre>
+    </div>
+  )
+}
+
 function ContentBlockRenderer({ block }: { block: ContentBlock }) {
   switch (block.type) {
     case 'heading':
@@ -18,11 +71,7 @@ function ContentBlockRenderer({ block }: { block: ContentBlock }) {
         </blockquote>
       )
     case 'code':
-      return (
-        <pre className="bg-gray-900 text-green-400 text-xs p-4 rounded-lg overflow-x-auto my-4 font-mono">
-          <code>{block.content}</code>
-        </pre>
-      )
+      return <CodeBlock content={block.content} />
     case 'image':
       return (
         <div className="my-6 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center h-64">
