@@ -161,7 +161,7 @@ export default function CasesPage() {
                     )}
                     <span className="text-xs text-gray-400">{c.updatedAt}</span>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{c.title}</h3>
+                  <Link href={`/community/cases/${c.id}`} className="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 transition-colors block">{c.title}</Link>
                   <p className="text-sm text-gray-500 mb-3">{c.summary}</p>
 
                   {/* Tags */}

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { ALL_KBS } from './data'
 
 const INDUSTRIES = ['全部', '通用', '互联网', '电商', '金融', '医疗', '法律']
@@ -206,7 +207,7 @@ export default function KnowledgePage() {
                       <span className="text-xs text-gray-400">{kb.updatedAt} 更新</span>
                     </div>
 
-                    <h3 className="text-lg font-semibold text-gray-900 mb-1">{kb.title}</h3>
+                    <Link href={`/community/knowledge/${kb.id}`} className="text-lg font-semibold text-gray-900 mb-1 hover:text-emerald-600 transition-colors block">{kb.title}</Link>
                     <p className="text-sm text-gray-500 mb-3">{kb.desc}</p>
 
                     {/* Tags */}

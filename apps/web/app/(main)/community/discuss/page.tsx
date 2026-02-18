@@ -1,131 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
+import { POSTS, REPLIES } from './data'
 
 const CATEGORIES = ['全部', '经验分享', '行业讨论', '问题求助', '使用心得', '技术交流']
 const SORT_OPTIONS = ['最新回复', '最新发布', '热门']
-
-const POSTS = [
-  {
-    id: '1',
-    title: '如何设计一个高效的文档处理链路？分享我的最佳实践',
-    author: '技术达人',
-    avatar: 'T',
-    category: '经验分享',
-    content: '最近在使用小浣熊处理大量文档时，总结了一些经验分享给大家：1. 明确输入输出格式；2. 合理分段处理；3. 增加检查步骤...',
-    replies: 24,
-    views: 312,
-    likes: 45,
-    createdAt: '2小时前',
-    lastReply: '10分钟前',
-    tags: ['最佳实践', '文档处理', '工作流'],
-  },
-  {
-    id: '2',
-    title: '小浣熊在教育行业的应用场景探讨',
-    author: '教育从业者',
-    avatar: 'E',
-    category: '行业讨论',
-    content: '作为一名教育行业从业者，想和大家探讨小浣熊在教育场景的应用可能性。目前我已经尝试了作业批改自动化、教案生成等场景，欢迎讨论...',
-    replies: 18,
-    views: 256,
-    likes: 32,
-    createdAt: '5小时前',
-    lastReply: '30分钟前',
-    tags: ['教育', '场景探索'],
-  },
-  {
-    id: '3',
-    title: '【求助】多文件并行处理时如何避免上下文混淆？',
-    author: '新手用户',
-    avatar: 'N',
-    category: '问题求助',
-    content: '我在使用小浣熊处理多个文件时，发现有时候会出现上下文混淆的情况。比如处理 A 文件时会引用 B 文件的内容。有没有什么好的解决方案？',
-    replies: 15,
-    views: 198,
-    likes: 12,
-    createdAt: '8小时前',
-    lastReply: '1小时前',
-    tags: ['求助', '多文件处理'],
-  },
-  {
-    id: '4',
-    title: '使用小浣熊一个月总结：哪些场景最高效？',
-    author: '资深用户',
-    avatar: 'S',
-    category: '使用心得',
-    content: '用小浣熊一个月了，总结一下我觉得最高效的几个场景：数据清洗、报告生成、邮件自动回复、会议记录整理。分享一些使用心得...',
-    replies: 31,
-    views: 445,
-    likes: 67,
-    createdAt: '1天前',
-    lastReply: '2小时前',
-    tags: ['心得', '场景总结'],
-  },
-  {
-    id: '5',
-    title: 'AI 在金融风控中的应用思考',
-    author: '金融从业者',
-    avatar: 'J',
-    category: '行业讨论',
-    content: '最近在尝试用小浣熊做金融风控相关的工作，包括异常交易识别、风险评估报告生成等。想和大家交流一下金融行业使用 AI 的经验和注意事项...',
-    replies: 22,
-    views: 301,
-    likes: 41,
-    createdAt: '1天前',
-    lastReply: '3小时前',
-    tags: ['金融', '风控', '应用场景'],
-  },
-  {
-    id: '6',
-    title: '代码审查自动化实践 - 提升团队代码质量',
-    author: '技术负责人',
-    avatar: 'R',
-    category: '技术交流',
-    content: '我们团队最近使用小浣熊进行代码审查辅助，效果显著。分享一下我们的实践经验：设置代码规范检查链路、安全漏洞扫描、性能优化建议...',
-    replies: 19,
-    views: 268,
-    likes: 38,
-    createdAt: '2天前',
-    lastReply: '5小时前',
-    tags: ['代码审查', '自动化', '质量提升'],
-  },
-  {
-    id: '7',
-    title: '如何提高 Prompt 的准确性和稳定性？',
-    author: 'Prompt 工程师',
-    avatar: 'P',
-    category: '经验分享',
-    content: '经过大量实践，总结了一些提高 Prompt 准确性的技巧：1. 明确角色定位；2. 提供清晰的示例；3. 使用结构化输出；4. 设置检查机制...',
-    replies: 42,
-    views: 589,
-    likes: 93,
-    createdAt: '3天前',
-    lastReply: '1小时前',
-    tags: ['Prompt', '最佳实践', '提示工程'],
-  },
-]
-
-const REPLIES = [
-  {
-    id: 'r1',
-    postId: '1',
-    author: '小白学习中',
-    avatar: 'X',
-    content: '太有帮助了！尤其是第2点，我之前就是没有合理分段导致处理大文件时效率很低。',
-    likes: 8,
-    createdAt: '10分钟前',
-  },
-  {
-    id: 'r2',
-    postId: '1',
-    author: '开发老鸟',
-    avatar: 'K',
-    content: '同意楼主的观点，增加检查步骤非常关键。我一般会在每个关键环节设置验证逻辑，确保输出符合预期。',
-    likes: 12,
-    createdAt: '1小时前',
-  },
-]
 
 export default function DiscussPage() {
   const [category, setCategory] = useState('全部')
@@ -197,9 +77,9 @@ export default function DiscussPage() {
                       </div>
 
                       {/* Title */}
-                      <h3 className="text-base font-semibold text-gray-900 mb-2 cursor-pointer hover:text-blue-600 transition-colors">
+                      <Link href={`/community/discuss/${post.id}`} className="text-base font-semibold text-gray-900 mb-2 hover:text-blue-600 transition-colors block">
                         {post.title}
-                      </h3>
+                      </Link>
 
                       {/* Content Preview */}
                       <p className="text-sm text-gray-600 mb-3 line-clamp-2">{post.content}</p>
