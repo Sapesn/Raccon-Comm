@@ -4,6 +4,7 @@ import type { ReactNode } from 'react'
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { UNREAD_COUNT } from './messages/data'
 
 const mainTabs = [
   { href: '/community', label: '首页', exact: true },
@@ -14,6 +15,7 @@ const mainTabs = [
 ]
 
 const moreTabs = [
+  { href: '/community/blog', label: '博客', icon: '✍️' },
   { href: '/community/members', label: '用户榜单', icon: '👥' },
   { href: '/community/events', label: '社区活动', icon: '🗓️' },
   { href: '/community/honors', label: '荣誉室', icon: '🏆' },
@@ -103,6 +105,21 @@ export default function CommunityLayout({ children }: { children: ReactNode }) {
 
           {/* Desktop Right Actions */}
           <div className="hidden md:flex items-center gap-2 flex-shrink-0">
+            {/* Messages icon with unread badge */}
+            <Link
+              href="/community/messages"
+              className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              aria-label="站内信"
+            >
+              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              {UNREAD_COUNT > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">
+                  {UNREAD_COUNT > 9 ? '9+' : UNREAD_COUNT}
+                </span>
+              )}
+            </Link>
             <div className="relative">
               <input
                 type="text"
@@ -174,7 +191,12 @@ export default function CommunityLayout({ children }: { children: ReactNode }) {
         {menuOpen && (
           <div className="md:hidden border-t bg-white">
             <nav className="container mx-auto px-4 py-3 space-y-0.5">
-              {[...mainTabs, ...moreTabs, { href: '/community/profile', label: '个人中心', icon: '⚙️' }].map((tab) => {
+              {[
+                ...mainTabs,
+                { href: '/community/messages', label: '站内信', icon: '📬' },
+                ...moreTabs,
+                { href: '/community/profile', label: '个人中心', icon: '⚙️' }
+              ].map((tab) => {
                 const isActive = 'exact' in tab && tab.exact ? pathname === tab.href : pathname.startsWith(tab.href)
                 return (
                   <Link
