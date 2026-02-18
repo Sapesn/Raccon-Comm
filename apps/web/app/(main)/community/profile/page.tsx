@@ -577,6 +577,100 @@ export default function ProfilePage() {
                 </div>
               </div>
 
+              {/* Streak Calendar */}
+              {(() => {
+                const CHECKED_IN_DAYS = new Set([1,2,3,4,5,6,7,8,9,12,13,14,15,16,17,...(checkedIn ? [18] : [])])
+                const currentStreak = checkedIn ? 7 : 6
+                const MONTH_DAYS = 28
+                const cells: { date: number; isToday: boolean; isFuture: boolean; checkedIn: boolean }[] = []
+                for (let d = 1; d <= MONTH_DAYS; d++) {
+                  cells.push({ date: d, isToday: d === 18, isFuture: d > 18, checkedIn: CHECKED_IN_DAYS.has(d) })
+                }
+                return (
+                  <div className="bg-white rounded-2xl border overflow-hidden">
+                    <div className="bg-gradient-to-r from-amber-400 to-orange-500 px-5 py-3 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl">🔥</span>
+                        <h3 className="font-bold text-white">签到日历</h3>
+                        <span className="text-xs bg-white/20 text-white px-2 py-0.5 rounded-full">2026年2月</span>
+                      </div>
+                      <div className="bg-white/20 px-3 py-1 rounded-full flex items-center gap-1">
+                        <span className="text-white text-lg font-black">{currentStreak}</span>
+                        <span className="text-white/80 text-xs">天连续</span>
+                      </div>
+                    </div>
+                    <div className="p-5">
+                      {/* Stats */}
+                      <div className="grid grid-cols-3 gap-3 mb-5">
+                        {[
+                          { label: '当前连续', value: currentStreak, unit: '天', color: 'text-amber-500', bg: 'bg-amber-50' },
+                          { label: '本月签到', value: CHECKED_IN_DAYS.size, unit: '天', color: 'text-blue-500', bg: 'bg-blue-50' },
+                          { label: '最长连续', value: 9, unit: '天', color: 'text-green-500', bg: 'bg-green-50' },
+                        ].map((stat) => (
+                          <div key={stat.label} className={`text-center ${stat.bg} rounded-xl p-3`}>
+                            <div className={`text-2xl font-black ${stat.color}`}>{stat.value}</div>
+                            <div className="text-xs text-gray-400">{stat.unit}</div>
+                            <div className="text-xs text-gray-500 mt-0.5">{stat.label}</div>
+                          </div>
+                        ))}
+                      </div>
+                      {/* Day Labels */}
+                      <div className="grid grid-cols-7 gap-1 mb-1">
+                        {['日', '一', '二', '三', '四', '五', '六'].map((d) => (
+                          <div key={d} className="text-center text-xs text-gray-400 font-medium py-0.5">{d}</div>
+                        ))}
+                      </div>
+                      {/* Calendar Grid */}
+                      <div className="grid grid-cols-7 gap-1">
+                        {cells.map((cell) => (
+                          <div
+                            key={cell.date}
+                            className={`
+                              aspect-square rounded-lg flex items-center justify-center text-xs font-medium transition-all
+                              ${cell.isToday ? 'ring-2 ring-amber-400 ring-offset-1' : ''}
+                              ${cell.checkedIn
+                                ? 'bg-green-500 text-white'
+                                : cell.isFuture
+                                ? 'text-gray-200'
+                                : 'bg-gray-100 text-gray-400'
+                              }
+                            `}
+                          >
+                            {cell.date}
+                          </div>
+                        ))}
+                      </div>
+                      {/* Legend */}
+                      <div className="flex items-center gap-4 mt-4 text-xs text-gray-400">
+                        <div className="flex items-center gap-1.5">
+                          <div className="w-3 h-3 rounded bg-green-500" />
+                          已签到
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <div className="w-3 h-3 rounded bg-gray-100" />
+                          未签到
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <div className="w-3 h-3 rounded ring-2 ring-amber-400" />
+                          今日
+                        </div>
+                        {!checkedIn && (
+                          <button
+                            onClick={() => setCheckedIn(true)}
+                            className="ml-auto text-xs bg-amber-500 text-white px-3 py-1.5 rounded-full hover:bg-amber-600 transition-colors font-medium"
+                          >
+                            📅 立即签到 +5
+                          </button>
+                        )}
+                        {checkedIn && (
+                          <span className="ml-auto text-xs text-green-600 font-medium">✅ 今日已签到</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )
+              })()}
+
               <div className="flex items-center justify-between mb-2">
                 <h3 className="font-bold text-gray-900">近期动态</h3>
               </div>
