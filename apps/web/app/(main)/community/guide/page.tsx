@@ -120,42 +120,68 @@ const MODULES = [
 ]
 
 const POINT_RULES = [
-  { category: '内容贡献', items: [
-    { action: '发布案例', points: '50-200', note: '根据质量评分' },
-    { action: '案例被官方推荐', points: '+500', note: '额外奖励' },
-    { action: '发布知识库', points: '30-100', note: '根据完整度' },
-    { action: '知识库被收藏', points: '+2/次', note: '上限 200' },
-    { action: '发布讨论', points: '+5', note: '' },
-    { action: '回复讨论', points: '+10', note: '' },
-    { action: '回答被采纳', points: '+50', note: '' },
+  { category: '内容贡献', icon: '📝', color: 'blue', items: [
+    { action: '发布案例', points: '+150', note: '经官方审核通过后发放' },
+    { action: '案例被官方推荐', points: '+200', note: '额外奖励，可多次获得' },
+    { action: '案例每次被复用', points: '+30', note: '上限 500/案例' },
+    { action: '发布博客文章', points: '+100', note: '字数 300+ 方有效' },
+    { action: '博客进入热门榜', points: '+80', note: '周热门 Top10' },
+    { action: '发布知识库', points: '+100', note: '文档 5 篇以上' },
+    { action: '知识库每次被收藏', points: '+2', note: '上限 200 积分/库' },
+    { action: '回答被采纳', points: '+50', note: '讨论区最佳回答' },
   ]},
-  { category: '社区互动', items: [
-    { action: '每日签到', points: '+5', note: '连续签到有加成' },
+  { category: '社区互动', icon: '🤝', color: 'emerald', items: [
+    { action: '每日签到', points: '+5', note: '连续 7 天额外 +20' },
+    { action: '连续签到奖励', points: '+20~100', note: '7/14/30 天阶梯奖励' },
+    { action: '发布讨论', points: '+10', note: '每日上限 3 次' },
     { action: '点赞内容', points: '+1', note: '每日上限 20' },
-    { action: '收藏内容', points: '+2', note: '' },
-    { action: '分享内容', points: '+3', note: '' },
-    { action: '邀请新用户', points: '+100', note: '新用户完成认证' },
+    { action: '邀请新用户注册', points: '+100', note: '新用户完成首次发布后' },
   ]},
-  { category: '产品反馈', items: [
-    { action: '提交反馈', points: '+10', note: '' },
-    { action: '反馈被采纳', points: '+200', note: '' },
-    { action: '参与投票', points: '+1', note: '' },
+  { category: '产品共建', icon: '💡', color: 'violet', items: [
+    { action: '提交产品反馈', points: '+10', note: '有效反馈，重复无效' },
+    { action: '反馈进入规划阶段', points: '+50', note: '官方确认后发放' },
+    { action: '反馈正式上线', points: '+200', note: '功能随版本发布' },
+    { action: '参与内测并提交报告', points: '+80', note: '受邀内测用户专属' },
   ]},
-  { category: '活动参与', items: [
-    { action: '报名活动', points: '+10', note: '' },
-    { action: '完成挑战', points: '50-500', note: '根据难度' },
-    { action: '活动签到', points: '+20', note: '' },
-    { action: '获奖', points: '+1000', note: '' },
+  { category: '活动参与', icon: '🎯', color: 'amber', items: [
+    { action: '报名并参加活动', points: '+20', note: '线上/线下均有效' },
+    { action: '活动签到打卡', points: '+20', note: '每场次' },
+    { action: '完成挑战赛任务', points: '+50~500', note: '根据难度与评分' },
+    { action: '挑战赛获奖', points: '+500~2000', note: '一等奖最高 2000' },
   ]},
 ]
 
 const POINT_LEVELS = [
-  { level: 'Lv.1 新手', min: 0, max: 499, icon: '🌱', perks: ['基础社区权限'] },
-  { level: 'Lv.2 活跃者', min: 500, max: 1999, icon: '🌿', perks: ['发布案例', '参与讨论'] },
-  { level: 'Lv.3 贡献者', min: 2000, max: 4999, icon: '🌳', perks: ['发布知识库', '优先客服'] },
-  { level: 'Lv.4 专家', min: 5000, max: 9999, icon: '🏅', perks: ['申请认证', '参与内测'] },
-  { level: 'Lv.5 大神', min: 10000, max: 19999, icon: '💎', perks: ['官方推荐', '专属客服'] },
-  { level: 'Lv.6 传说', min: 20000, max: null, icon: '👑', perks: ['产品顾问', '独家活动', '定制周边'] },
+  {
+    level: 'Lv.1', name: '浣熊幼崽', min: 0, max: 499, emoji: '🐾',
+    color: 'from-gray-100 to-gray-200', textColor: 'text-gray-600',
+    perks: ['加入所有社区讨论', '查看全站案例与知识库', '每日签到积累积分', '基础徽章收集资格'],
+  },
+  {
+    level: 'Lv.2', name: '探索小浣熊', min: 500, max: 1999, emoji: '🌿',
+    color: 'from-green-100 to-emerald-200', textColor: 'text-emerald-700',
+    perks: ['发布案例与博客文章', '发布知识库', '参与社区投票', '申请行业圈子成员'],
+  },
+  {
+    level: 'Lv.3', name: '知识浣熊', min: 2000, max: 4999, emoji: '📚',
+    color: 'from-blue-100 to-cyan-200', textColor: 'text-blue-700',
+    perks: ['案例优先展示机会', '优先获得活动名额', '申请「高级贡献者」身份', '解锁史诗勋章挑战资格'],
+  },
+  {
+    level: 'Lv.4', name: '专家浣熊', min: 5000, max: 9999, emoji: '🏅',
+    color: 'from-violet-100 to-purple-200', textColor: 'text-violet-700',
+    perks: ['申请「认证专家」身份', '参与产品内测资格', '专属客服优先响应', '参与官方专家圆桌讨论'],
+  },
+  {
+    level: 'Lv.5', name: '大师浣熊', min: 10000, max: 19999, emoji: '💎',
+    color: 'from-amber-100 to-orange-200', textColor: 'text-amber-700',
+    perks: ['内容官方重点推荐机会', '行业布道师认证资格', '定制化专属浣熊形象', '专属「大师」社群入场券'],
+  },
+  {
+    level: 'Lv.6', name: '传说浣熊', min: 20000, max: null, emoji: '👑',
+    color: 'from-rose-100 via-amber-100 to-yellow-200', textColor: 'text-rose-700',
+    perks: ['产品顾问委员会席位', '独家新功能发布预览', '专属定制实体周边礼包', '年度传说浣熊荣誉认定'],
+  },
 ]
 
 const BADGES = [
@@ -260,47 +286,69 @@ export default function GuidePage() {
                 <span>📈</span> 如何获得积分
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {POINT_RULES.map((cat) => (
-                  <div key={cat.category} className="bg-white rounded-xl shadow-sm border p-4">
-                    <h3 className="font-semibold text-gray-900 mb-3 text-sm">{cat.category}</h3>
-                    <div className="space-y-2">
-                      {cat.items.map((item, i) => (
-                        <div key={i} className="flex items-center justify-between text-sm">
-                          <div className="flex-1">
-                            <span className="text-gray-700">{item.action}</span>
-                            {item.note && <span className="text-xs text-gray-400 ml-1">({item.note})</span>}
+                {POINT_RULES.map((cat) => {
+                  const colorMap: Record<string, { header: string; badge: string; amount: string }> = {
+                    blue:    { header: 'bg-blue-50 border-blue-100', badge: 'bg-blue-600', amount: 'text-blue-600' },
+                    emerald: { header: 'bg-emerald-50 border-emerald-100', badge: 'bg-emerald-600', amount: 'text-emerald-600' },
+                    violet:  { header: 'bg-violet-50 border-violet-100', badge: 'bg-violet-600', amount: 'text-violet-600' },
+                    amber:   { header: 'bg-amber-50 border-amber-100', badge: 'bg-amber-500', amount: 'text-amber-600' },
+                  }
+                  const cfg = colorMap[cat.color] ?? colorMap.blue
+                  return (
+                    <div key={cat.category} className="bg-white rounded-xl border overflow-hidden">
+                      <div className={`flex items-center gap-2 px-4 py-3 border-b ${cfg.header}`}>
+                        <span className={`text-base w-7 h-7 rounded-lg flex items-center justify-center text-white ${cfg.badge}`}>
+                          {cat.icon}
+                        </span>
+                        <h3 className="font-semibold text-gray-900 text-sm">{cat.category}</h3>
+                      </div>
+                      <div className="p-4 space-y-2.5">
+                        {cat.items.map((item, i) => (
+                          <div key={i} className="flex items-start justify-between text-sm gap-2">
+                            <div className="flex-1 min-w-0">
+                              <span className="text-gray-700">{item.action}</span>
+                              {item.note && <p className="text-xs text-gray-400 mt-0.5">{item.note}</p>}
+                            </div>
+                            <span className={`font-bold flex-shrink-0 ${cfg.amount}`}>{item.points}</span>
                           </div>
-                          <span className="font-semibold text-blue-600 ml-2">{item.points}</span>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </div>
 
             {/* Point Levels */}
             <div>
               <h2 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <span>🏅</span> 积分等级与权益
+                <span>🏅</span> 积分等级与专属权益
               </h2>
               <div className="space-y-3">
-                {POINT_LEVELS.map((lv) => (
-                  <div key={lv.level} className="bg-white rounded-xl shadow-sm border p-4 flex items-center gap-4">
-                    <span className="text-3xl">{lv.icon}</span>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-1">
-                        <h3 className="font-bold text-gray-900">{lv.level}</h3>
-                        <span className="text-sm text-gray-500">
-                          {lv.min.toLocaleString()} - {lv.max ? lv.max.toLocaleString() : '∞'} 积分
-                        </span>
+                {POINT_LEVELS.map((lv, i) => (
+                  <div key={lv.level} className={`rounded-xl border p-5 bg-gradient-to-r ${lv.color}`}>
+                    <div className="flex items-start gap-4">
+                      <div className="flex-shrink-0 text-center">
+                        <span className="text-3xl block mb-1">{lv.emoji}</span>
+                        <span className={`text-xs font-bold ${lv.textColor}`}>{lv.level}</span>
                       </div>
-                      <div className="flex flex-wrap gap-2">
-                        {lv.perks.map((perk, i) => (
-                          <span key={i} className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
-                            ✓ {perk}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-baseline gap-2 mb-2 flex-wrap">
+                          <h3 className={`font-bold text-base ${lv.textColor}`}>{lv.name}</h3>
+                          <span className="text-xs text-gray-500 bg-white/60 px-2 py-0.5 rounded-full">
+                            {lv.min.toLocaleString()} – {lv.max ? lv.max.toLocaleString() : '∞'} 积分
                           </span>
-                        ))}
+                        </div>
+                        <div className="grid grid-cols-2 gap-1.5">
+                          {lv.perks.map((perk, j) => (
+                            <div key={j} className="flex items-center gap-1.5 text-xs text-gray-700">
+                              <svg className={`w-3 h-3 flex-shrink-0 ${lv.textColor}`} fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                              </svg>
+                              {perk}
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
