@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { POSTS, REPLIES } from './data'
+import { POSTS } from './data'
 
 const CATEGORIES = ['全部', '经验分享', '行业讨论', '问题求助', '使用心得', '技术交流']
 const SORT_OPTIONS = ['最新回复', '最新发布', '热门']
@@ -10,7 +10,6 @@ const SORT_OPTIONS = ['最新回复', '最新发布', '热门']
 export default function DiscussPage() {
   const [category, setCategory] = useState('全部')
   const [sort, setSort] = useState('最新回复')
-  const [expandedPost, setExpandedPost] = useState<string | null>(null)
 
   const filtered = POSTS.filter((p) => category === '全部' || p.category === category).sort((a, b) => {
     if (sort === '最新回复') return new Date(b.lastReply).getTime() - new Date(a.lastReply).getTime()
@@ -60,85 +59,43 @@ export default function DiscussPage() {
           </div>
 
           {/* Posts List */}
-          <div className="space-y-4">
+          <div className="space-y-3">
             {filtered.map((post) => (
-              <div key={post.id} className="bg-white rounded-xl shadow-sm border overflow-hidden hover:shadow-md transition-shadow">
+              <div key={post.id} className="bg-white rounded-xl shadow-sm border hover:shadow-md transition-shadow">
                 <div className="p-5">
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-blue-400 flex items-center justify-center text-white font-bold flex-shrink-0">
-                      {post.avatar}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      {/* Header */}
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="font-medium text-gray-900">{post.author}</span>
-                        <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{post.category}</span>
-                        <span className="text-xs text-gray-400">{post.createdAt}</span>
-                      </div>
+                  {/* Title */}
+                  <Link href={`/community/discuss/${post.id}`} className="text-base font-bold text-gray-900 mb-2 hover:text-blue-600 transition-colors block leading-snug">
+                    {post.title}
+                  </Link>
 
-                      {/* Title */}
-                      <Link href={`/community/discuss/${post.id}`} className="text-base font-semibold text-gray-900 mb-2 hover:text-blue-600 transition-colors block">
-                        {post.title}
-                      </Link>
+                  {/* Content Preview */}
+                  <p className="text-sm text-gray-600 mb-3 line-clamp-3 leading-relaxed">
+                    {post.content.split('\n\n').find(p => p.trim() && !p.startsWith('**') && !p.startsWith('```'))?.replace(/\*\*/g, '') ?? ''}
+                  </p>
 
-                      {/* Content Preview */}
-                      <p className="text-sm text-gray-600 mb-3 line-clamp-2">{post.content}</p>
-
-                      {/* Tags */}
-                      <div className="flex gap-2 mb-3 flex-wrap">
-                        {post.tags.map((tag) => (
-                          <span key={tag} className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">#{tag}</span>
-                        ))}
-                      </div>
-
-                      {/* Stats & Actions */}
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4 text-sm text-gray-500">
-                          <button className="hover:text-blue-600 transition-colors">💬 {post.replies} 回复</button>
-                          <button className="hover:text-red-500 transition-colors">❤️ {post.likes} 点赞</button>
-                          <span>👁 {post.views} 浏览</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-xs text-gray-400">
-                          <span>最新回复 {post.lastReply}</span>
-                          <button
-                            onClick={() => setExpandedPost(expandedPost === post.id ? null : post.id)}
-                            className="text-blue-600 hover:underline"
-                          >
-                            {expandedPost === post.id ? '收起' : '查看回复'}
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                  {/* Tags */}
+                  <div className="flex gap-1.5 mb-3 flex-wrap">
+                    {post.tags.map((tag) => (
+                      <span key={tag} className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">#{tag}</span>
+                    ))}
                   </div>
 
-                  {/* Expanded Replies */}
-                  {expandedPost === post.id && (
-                    <div className="mt-4 pl-0 sm:pl-14 space-y-3 border-t pt-4">
-                      {REPLIES.filter((r) => r.postId === post.id).map((reply) => (
-                        <div key={reply.id} className="flex gap-3 bg-gray-50 rounded-lg p-3">
-                          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-                            {reply.avatar}
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-sm font-medium text-gray-900">{reply.author}</span>
-                              <span className="text-xs text-gray-400">{reply.createdAt}</span>
-                            </div>
-                            <p className="text-sm text-gray-700 mb-2">{reply.content}</p>
-                            <button className="text-xs text-gray-500 hover:text-red-500 transition-colors">❤️ {reply.likes}</button>
-                          </div>
-                        </div>
-                      ))}
-                      <div className="flex gap-3">
-                        <input
-                          type="text"
-                          placeholder="写下你的回复..."
-                          className="flex-1 text-sm border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                        />
-                        <button className="bg-blue-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">发送</button>
+                  {/* Footer: author + stats */}
+                  <div className="flex items-center justify-between pt-3 border-t">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-6 h-6 rounded-full bg-gradient-to-br ${post.avatarGrad} flex items-center justify-center text-white text-xs font-bold flex-shrink-0`}>
+                        {post.avatar}
                       </div>
+                      <span className="text-xs text-gray-500">{post.author}</span>
+                      <span className="text-xs bg-gray-100 text-gray-400 px-1.5 py-0.5 rounded-full">{post.category}</span>
+                      <span className="text-xs text-gray-400">{post.createdAt}</span>
                     </div>
-                  )}
+                    <div className="flex items-center gap-3 text-xs text-gray-400">
+                      <span>💬 {post.replies}</span>
+                      <span>❤️ {post.likes}</span>
+                      <span>👁 {post.views}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
