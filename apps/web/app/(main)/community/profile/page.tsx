@@ -152,14 +152,30 @@ const MY_COLLECTS = [
 ]
 
 const BADGES = [
-  { icon: '🌟', name: '初级贡献者', desc: '发布第一个案例', unlocked: true, unlockedAt: '2025-11-20', tip: '欢迎加入社区！' },
-  { icon: '🔥', name: '热门作者', desc: '案例获得 50+ 赞', unlocked: true, unlockedAt: '2025-12-20', tip: '你的内容深受欢迎！' },
-  { icon: '⚡', name: '复用达人', desc: '案例被复用 50+ 次', unlocked: true, unlockedAt: '2026-01-15', tip: '你创造了巨大价值！' },
-  { icon: '🎯', name: '精品认证', desc: '获得官方推荐', unlocked: false, tip: '需要获得官方推荐', progress: '已获得 1 次推荐' },
-  { icon: '🏆', name: '顶级贡献者', desc: '累计积分 5000+', unlocked: false, tip: '再积累 4000 积分可解锁', progress: '当前积分 1010' },
-  { icon: '💼', name: '行业专家', desc: '同行业发布 20+ 案例', unlocked: false, tip: '需在同一行业发布 20 个案例', progress: '当前 2/20' },
-  { icon: '💡', name: '创意达人', desc: '提交反馈被采纳 3 次', unlocked: false, tip: '需要再被采纳 2 次', progress: '当前 1/3' },
-  { icon: '👥', name: '社区之星', desc: '粉丝数超过 100', unlocked: false, tip: '需要再积累 76 名粉丝', progress: '当前 24/100' },
+  // 普通
+  { icon: '🌱', name: '初来乍到', desc: '完成注册并设置头像', rarity: 'common', unlocked: true, unlockedAt: '2025-11-01', tip: '你迈出了第一步！' },
+  { icon: '🌟', name: '初级贡献者', desc: '发布第一个案例', rarity: 'common', unlocked: true, unlockedAt: '2025-11-20', tip: '欢迎加入社区！' },
+  { icon: '💬', name: '话匣子', desc: '发布第一条社区评论', rarity: 'common', unlocked: true, unlockedAt: '2025-11-22', tip: '多多交流！' },
+  { icon: '✍️', name: '首篇博文', desc: '发布第一篇博客文章', rarity: 'common', unlocked: false, tip: '去写一篇博客吧', progress: '去 /community/blog/write 发布' },
+  { icon: '🤝', name: '社区新人', desc: '连续签到 7 天', rarity: 'common', unlocked: false, tip: '连续签到 7 天', progress: '当前连续 3/7 天' },
+  // 稀有
+  { icon: '🔥', name: '热门作者', desc: '内容累计获得 50+ 点赞', rarity: 'rare', unlocked: true, unlockedAt: '2025-12-20', tip: '你的内容深受欢迎！' },
+  { icon: '⚡', name: '复用达人', desc: '案例被复用 50+ 次', rarity: 'rare', unlocked: true, unlockedAt: '2026-01-15', tip: '你创造了巨大价值！' },
+  { icon: '💡', name: '建设者', desc: '反馈被采纳 3 次', rarity: 'rare', unlocked: false, tip: '继续提交高质量反馈', progress: '已被采纳 1/3 次' },
+  { icon: '🎯', name: '签到达人', desc: '连续签到 30 天', rarity: 'rare', unlocked: false, tip: '坚持每天登录', progress: '连续 3/30 天' },
+  { icon: '📚', name: '知识传播者', desc: '知识库累计被引用 100 次', rarity: 'rare', unlocked: false, tip: '发布优质知识库', progress: '当前 12/100 次' },
+  // 史诗
+  { icon: '🏆', name: '顶级贡献者', desc: '累计积分超过 5000', rarity: 'epic', unlocked: false, tip: '再积累 3990 积分可解锁', progress: '当前 1010/5000 积分' },
+  { icon: '💼', name: '行业专家', desc: '同行业发布 20+ 案例', rarity: 'epic', unlocked: false, tip: '深耕一个行业', progress: '当前 2/20 个' },
+  { icon: '👥', name: '社区之星', desc: '粉丝数超过 100', rarity: 'epic', unlocked: false, tip: '持续输出优质内容', progress: '当前 24/100 粉丝' },
+  { icon: '✨', name: '精品认证', desc: '获得官方推荐 3 次', rarity: 'epic', unlocked: false, tip: '发布高质量案例吸引官方关注', progress: '已获推荐 1/3 次' },
+  { icon: '📖', name: '知识大师', desc: '发布 10+ 个知识库', rarity: 'epic', unlocked: false, tip: '持续沉淀行业知识', progress: '当前 0/10 个' },
+  // 传说
+  { icon: '👑', name: '传奇贡献者', desc: '累计积分超过 20000', rarity: 'legend', unlocked: false, tip: '站在积分排行榜顶端', progress: '当前 1010/20000 积分' },
+  { icon: '🦝', name: '浣熊传说', desc: '浣熊进化到传说形态', rarity: 'legend', unlocked: false, tip: '需要积累 20000+ 积分', progress: '当前 Lv.3，距 Lv.6 还远' },
+  { icon: '🌍', name: '行业布道师', desc: '获得官方行业布道师认证', rarity: 'legend', unlocked: false, tip: '通过官方认证申请', progress: '需提交认证申请' },
+  { icon: '🎖️', name: '荣誉勋章', desc: '获得官方特别荣誉认定', rarity: 'legend', unlocked: false, tip: '由官方团队颁发', progress: '等待官方评选' },
+  { icon: '⭐', name: '周年纪念', desc: '加入社区满 1 周年', rarity: 'legend', unlocked: false, tip: '时间会证明一切', progress: '加入 3/12 个月' },
 ]
 
 const TABS = [
@@ -169,7 +185,7 @@ const TABS = [
   { id: 'feedback', label: '我的反馈', count: 2 },
   { id: 'comments', label: '我的评论', count: 3 },
   { id: 'collects', label: '我的收藏', count: 3 },
-  { id: 'badges', label: '勋章墙', count: 3 },
+  { id: 'badges', label: '勋章墙', count: 5 },
 ]
 
 const totalPoints = POINTS_HISTORY.reduce((sum, h) => sum + h.points, 0)
@@ -395,6 +411,171 @@ export default function ProfilePage() {
                   </div>
                 )
               })()}
+
+              {/* Daily & Weekly Missions */}
+              <div className="bg-white rounded-2xl border overflow-hidden">
+                <div className="bg-gradient-to-r from-emerald-500 to-teal-600 px-5 py-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl">🎯</span>
+                    <h3 className="font-bold text-white">今日任务</h3>
+                  </div>
+                  <span className="text-xs bg-white/20 text-white px-2 py-1 rounded-full font-medium">
+                    完成可获积分奖励
+                  </span>
+                </div>
+
+                <div className="p-5 space-y-4">
+                  {/* Daily Missions */}
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-sm font-semibold text-gray-900 flex items-center gap-1.5">
+                        <span className="text-lg">☀️</span> 每日任务
+                      </h4>
+                      <span className="text-xs text-gray-400">每日 0:00 重置</span>
+                    </div>
+                    <div className="space-y-2">
+                      {[
+                        { task: '每日签到', progress: 1, target: 1, reward: 5, completed: checkedIn },
+                        { task: '发布 1 条评论', progress: 0, target: 1, reward: 10, completed: false },
+                        { task: '点赞 5 个内容', progress: 3, target: 5, reward: 5, completed: false },
+                      ].map((mission, i) => (
+                        <div
+                          key={i}
+                          className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
+                            mission.completed
+                              ? 'bg-green-50 border-green-200'
+                              : 'bg-gray-50 border-gray-100 hover:border-gray-200'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3 flex-1">
+                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                              mission.completed ? 'bg-green-500 border-green-500' : 'border-gray-300'
+                            }`}>
+                              {mission.completed && (
+                                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                </svg>
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className={`text-sm font-medium ${mission.completed ? 'text-green-700' : 'text-gray-700'}`}>
+                                {mission.task}
+                              </p>
+                              <div className="flex items-center gap-2 mt-0.5">
+                                <div className="flex-1 max-w-[120px] h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                                  <div
+                                    className={`h-full rounded-full transition-all ${
+                                      mission.completed ? 'bg-green-500' : 'bg-blue-500'
+                                    }`}
+                                    style={{ width: `${(mission.progress / mission.target) * 100}%` }}
+                                  />
+                                </div>
+                                <span className="text-xs text-gray-400">
+                                  {mission.progress}/{mission.target}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 flex-shrink-0">
+                            <span className="text-xs font-semibold text-amber-600">+{mission.reward}</span>
+                            {mission.completed ? (
+                              <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">
+                                已完成
+                              </span>
+                            ) : (
+                              <button
+                                disabled
+                                className="text-xs bg-gray-100 text-gray-400 px-2 py-1 rounded-full cursor-not-allowed"
+                              >
+                                未完成
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Weekly Missions */}
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-sm font-semibold text-gray-900 flex items-center gap-1.5">
+                        <span className="text-lg">📅</span> 本周任务
+                      </h4>
+                      <span className="text-xs text-gray-400">每周一 0:00 重置</span>
+                    </div>
+                    <div className="space-y-2">
+                      {[
+                        { task: '发布 1 个案例或博客', progress: 0, target: 1, reward: 150, completed: false },
+                        { task: '获得 10 个点赞', progress: 7, target: 10, reward: 30, completed: false },
+                        { task: '连续签到 7 天', progress: 3, target: 7, reward: 50, completed: false },
+                      ].map((mission, i) => (
+                        <div
+                          key={i}
+                          className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
+                            mission.completed
+                              ? 'bg-violet-50 border-violet-200'
+                              : 'bg-gray-50 border-gray-100 hover:border-gray-200'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3 flex-1">
+                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                              mission.completed ? 'bg-violet-500 border-violet-500' : 'border-gray-300'
+                            }`}>
+                              {mission.completed && (
+                                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                </svg>
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className={`text-sm font-medium ${mission.completed ? 'text-violet-700' : 'text-gray-700'}`}>
+                                {mission.task}
+                              </p>
+                              <div className="flex items-center gap-2 mt-0.5">
+                                <div className="flex-1 max-w-[120px] h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                                  <div
+                                    className={`h-full rounded-full transition-all ${
+                                      mission.completed ? 'bg-violet-500' : 'bg-emerald-500'
+                                    }`}
+                                    style={{ width: `${(mission.progress / mission.target) * 100}%` }}
+                                  />
+                                </div>
+                                <span className="text-xs text-gray-400">
+                                  {mission.progress}/{mission.target}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 flex-shrink-0">
+                            <span className="text-xs font-semibold text-amber-600">+{mission.reward}</span>
+                            {mission.completed ? (
+                              <span className="text-xs bg-violet-100 text-violet-700 px-2 py-1 rounded-full font-medium">
+                                已完成
+                              </span>
+                            ) : (
+                              <button
+                                disabled
+                                className="text-xs bg-gray-100 text-gray-400 px-2 py-1 rounded-full cursor-not-allowed"
+                              >
+                                未完成
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Mission Tips */}
+                  <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 flex items-start gap-2">
+                    <span className="text-lg flex-shrink-0">💡</span>
+                    <p className="text-xs text-blue-700 leading-relaxed">
+                      完成任务可获得额外积分奖励，积分可用于浣熊升级、兑换特权等。每日和每周任务会自动重置，记得每天回来打卡！
+                    </p>
+                  </div>
+                </div>
+              </div>
 
               <div className="flex items-center justify-between mb-2">
                 <h3 className="font-bold text-gray-900">近期动态</h3>
@@ -638,42 +819,81 @@ export default function ProfilePage() {
           )}
 
           {/* 勋章墙 */}
-          {activeTab === 'badges' && (
-            <div>
-              <div className="flex items-center justify-between mb-5">
-                <div>
-                  <h3 className="font-bold text-gray-900">我的勋章</h3>
-                  <p className="text-sm text-gray-500 mt-0.5">已解锁 {BADGES.filter((b) => b.unlocked).length}/{BADGES.length} 枚</p>
+          {activeTab === 'badges' && (() => {
+            const unlockedCount = BADGES.filter((b) => b.unlocked).length
+            const rarityConfig: Record<string, { label: string; color: string; bg: string; border: string; textColor: string }> = {
+              common:  { label: '普通', color: 'text-gray-500', bg: 'bg-gray-50', border: 'border-gray-200', textColor: 'text-gray-600' },
+              rare:    { label: '稀有', color: 'text-blue-500', bg: 'bg-blue-50', border: 'border-blue-200', textColor: 'text-blue-700' },
+              epic:    { label: '史诗', color: 'text-violet-500', bg: 'bg-violet-50', border: 'border-violet-200', textColor: 'text-violet-700' },
+              legend:  { label: '传说', color: 'text-amber-500', bg: 'bg-amber-50', border: 'border-amber-200', textColor: 'text-amber-700' },
+            }
+            const grouped = ['common', 'rare', 'epic', 'legend'].map((r) => ({
+              rarity: r,
+              badges: BADGES.filter((b) => b.rarity === r),
+            }))
+            return (
+              <div>
+                <div className="flex items-center justify-between mb-5">
+                  <div>
+                    <h3 className="font-bold text-gray-900">我的勋章</h3>
+                    <p className="text-sm text-gray-500 mt-0.5">已解锁 {unlockedCount}/{BADGES.length} 枚</p>
+                  </div>
+                  <div className="flex gap-1.5">
+                    {Object.entries(rarityConfig).map(([key, cfg]) => (
+                      <span key={key} className={`text-xs px-2 py-0.5 rounded-full font-medium ${cfg.bg} ${cfg.textColor} border ${cfg.border}`}>
+                        {cfg.label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  {grouped.map(({ rarity, badges }) => {
+                    const cfg = rarityConfig[rarity]
+                    const unlockedInGroup = badges.filter((b) => b.unlocked).length
+                    return (
+                      <div key={rarity}>
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${cfg.bg} ${cfg.textColor} border ${cfg.border}`}>
+                            {cfg.label}
+                          </span>
+                          <span className="text-xs text-gray-400">{unlockedInGroup}/{badges.length} 已解锁</span>
+                        </div>
+                        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                          {badges.map((badge) => (
+                            <div
+                              key={badge.name}
+                              title={badge.unlocked ? badge.tip : badge.progress}
+                              className={`text-center p-4 rounded-xl border-2 transition-all hover:scale-105 cursor-default ${
+                                badge.unlocked
+                                  ? `${cfg.border} ${cfg.bg} shadow-sm`
+                                  : 'border-gray-100 bg-gray-50/50 opacity-60'
+                              }`}
+                            >
+                              <div className={`text-3xl mb-2 ${!badge.unlocked && 'grayscale opacity-50'}`}>{badge.icon}</div>
+                              <div className={`text-xs font-semibold mb-0.5 ${badge.unlocked ? 'text-gray-900' : 'text-gray-400'}`}>
+                                {badge.name}
+                              </div>
+                              <div className="text-xs text-gray-400 leading-snug mb-2">{badge.desc}</div>
+                              {badge.unlocked ? (
+                                <div className={`text-xs font-medium px-1.5 py-0.5 rounded-full ${cfg.bg} ${cfg.textColor}`}>
+                                  {badge.unlockedAt}
+                                </div>
+                              ) : (
+                                <div className="text-xs text-gray-400 bg-gray-100 rounded-full px-1.5 py-0.5 truncate" title={badge.progress}>
+                                  {badge.progress}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                {BADGES.map((badge) => (
-                  <div
-                    key={badge.name}
-                    className={`text-center p-5 rounded-2xl border-2 transition-all ${
-                      badge.unlocked
-                        ? 'border-amber-200 bg-gradient-to-b from-amber-50 to-orange-50 shadow-sm'
-                        : 'border-gray-100 bg-gray-50/50'
-                    }`}
-                  >
-                    <div className={`text-3xl sm:text-5xl mb-2 sm:mb-3 ${!badge.unlocked && 'grayscale opacity-40'}`}>{badge.icon}</div>
-                    <div className={`font-semibold mb-1 ${badge.unlocked ? 'text-gray-900' : 'text-gray-400'}`}>{badge.name}</div>
-                    <div className={`text-xs mb-2 ${badge.unlocked ? 'text-gray-500' : 'text-gray-300'}`}>{badge.desc}</div>
-                    {badge.unlocked ? (
-                      <div className="text-xs text-amber-600 font-medium bg-amber-100 rounded-full px-2 py-0.5">
-                        已解锁 {badge.unlockedAt}
-                      </div>
-                    ) : (
-                      <div className="text-xs text-gray-400 bg-gray-100 rounded-full px-2 py-0.5 truncate" title={badge.progress}>
-                        {badge.progress}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+            )
+          })()}
         </div>
       </div>
     </div>
