@@ -1,27 +1,58 @@
+/**
+ * 消息中心数据模型与 Mock 数据
+ *
+ * 包含用户消息收件箱的类型定义和示例数据
+ * 消息分为三类：系统公告、积分通知、用户私信
+ * 支持已读/未读状态管理，并可关联到具体的社区内容
+ */
+
+/**
+ * 消息来源分类
+ * - user: 来自其他社区用户的私信
+ * - system: 来自平台官方的系统通知（如获得推荐、解锁徽章）
+ * - notification: 来自系统的事件提醒（如点赞通知、积分变动）
+ */
 export type MessageCategory = 'user' | 'system' | 'notification'
+
+/**
+ * 消息阅读状态
+ * 用于在消息列表中显示未读标记，并统计未读数量
+ */
 export type MessageStatus = 'unread' | 'read'
 
+/**
+ * 消息完整结构
+ * 统一的消息数据模型，同时支持系统消息和用户私信
+ */
 export interface Message {
-  id: string
-  category: MessageCategory
+  id: string            // 消息唯一标识
+  category: MessageCategory // 消息来源分类，决定消息展示样式和来源图标
   from: {
-    id: string
-    name: string
-    avatar: string
-    avatarGrad: string
+    id: string          // 发送者用户 ID（系统消息固定为 'system'）
+    name: string        // 发送者显示名称
+    avatar: string      // 发送者头像（单字母简写或 Emoji）
+    avatarGrad: string  // 发送者头像渐变色类名
   }
-  subject: string
-  preview: string
-  content: string
-  timestamp: string
-  status: MessageStatus
-  relatedContent?: {
-    id: string
-    title: string
-    type: 'case' | 'kb' | 'discussion'
+  subject: string       // 消息主题/标题
+  preview: string       // 消息预览文本，用于列表展示（避免显示过长内容）
+  content: string       // 消息完整内容
+  timestamp: string     // 消息发送时间（相对时间格式，如"2小时前"）
+  status: MessageStatus // 消息阅读状态
+  relatedContent?: {    // 关联的社区内容（可选），方便用户快速跳转
+    id: string          // 关联内容 ID
+    title: string       // 关联内容标题
+    type: 'case' | 'kb' | 'discussion' // 关联内容类型（案例、知识库、讨论）
   }
 }
 
+/**
+ * 消息列表 Mock 数据
+ * 包含 8 条示例消息，覆盖三种消息类型
+ * 模拟用户在社区中的常见消息场景：
+ * - 官方推荐通知、积分变动通知、徽章解锁
+ * - 其他用户的咨询私信和圆桌邀请
+ * - 每日签到提醒、互动通知（点赞、评论）
+ */
 export const MESSAGES: Message[] = [
   {
     id: 'm1',
@@ -109,4 +140,9 @@ export const MESSAGES: Message[] = [
   },
 ]
 
+/**
+ * 未读消息数量
+ * 通过过滤 MESSAGES 中状态为 'unread' 的消息计算得出
+ * 用于导航栏红点提示和角标展示
+ */
 export const UNREAD_COUNT = MESSAGES.filter((m) => m.status === 'unread').length

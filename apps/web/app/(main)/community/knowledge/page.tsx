@@ -1,14 +1,30 @@
+/**
+ * 知识库列表页
+ * 展示社区中可一键转存的知识库资源
+ * 知识库是结构化的文档集合，转存后可在小浣熊中通过 @引用 直接调用
+ */
 'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
 import { ALL_KBS } from './data'
 
+/** 行业分类选项 */
 const INDUSTRIES = ['全部', '通用', '互联网', '电商', '金融', '医疗', '法律']
+/** 排序选项 */
 const SORT_OPTIONS = ['最多转存', '最新发布', '最多点赞', '最多浏览']
 
+/**
+ * 知识库转存弹窗组件
+ * 模拟三步转存流程（读取结构 → 复制文档 → 存入），通过 setInterval 推进进度
+ *
+ * @param kb - 要转存的知识库数据
+ * @param onClose - 关闭弹窗的回调
+ */
 function SaveModal({ kb, onClose }: { kb: typeof ALL_KBS[0]; onClose: () => void }) {
+  /** 当前步骤索引（0~2） */
   const [step, setStep] = useState(0)
+  /** 是否已完成转存 */
   const [done, setDone] = useState(false)
 
   const steps = [

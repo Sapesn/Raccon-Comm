@@ -1,43 +1,77 @@
+/**
+ * 博客文章数据模型与 Mock 数据
+ *
+ * 包含博客文章的完整数据结构，包括内容块、评论、元信息等
+ * 用于社区博客展示功能，支持富文本内容的结构化存储
+ */
+
+/**
+ * 内容块类型枚举
+ * 定义文章内容的不同展示形式，支持富文本结构化编辑
+ */
 export type BlockType = 'heading' | 'paragraph' | 'quote' | 'code' | 'image'
 
+/**
+ * 内容块结构
+ * 博客文章的基本组成单元，通过组合不同类型的内容块构建完整文章
+ */
 export interface ContentBlock {
-  id: string
-  type: BlockType
-  content: string
+  id: string        // 内容块唯一标识，用于渲染时的 key 值
+  type: BlockType   // 内容块类型，决定渲染方式（标题/段落/引用/代码/图片）
+  content: string   // 内容块的实际内容，根据 type 不同解析方式不同
 }
 
+/**
+ * 博客评论结构
+ * 记录用户对文章的评论，支持点赞、显示头像等社交功能
+ */
 export interface BlogComment {
-  id: string
-  author: string
-  avatar: string
-  avatarGrad: string
-  content: string
-  createdAt: string
-  likes: number
+  id: string          // 评论唯一标识
+  author: string      // 评论者昵称
+  avatar: string      // 评论者头像（单字母简写）
+  avatarGrad: string  // 头像渐变色类名，用于 Tailwind 渐变背景
+  content: string     // 评论内容文本
+  createdAt: string   // 评论发布时间（相对时间格式，如"1天前"）
+  likes: number       // 评论获得的点赞数
 }
 
+/**
+ * 博客文章完整结构
+ * 包含文章的所有元信息、内容、评论等数据
+ * 是博客模块的核心数据模型
+ */
 export interface BlogArticle {
-  id: string
-  title: string
-  excerpt: string
-  category: string
-  tags: string[]
-  author: string
-  authorTitle: string
-  avatar: string
-  avatarGrad: string
-  createdAt: string
-  updatedAt: string
-  readTime: number
-  views: number
-  likes: number
-  coverGrad: string
-  content: ContentBlock[]
-  comments: BlogComment[]
+  id: string              // 文章唯一标识
+  title: string           // 文章标题
+  excerpt: string         // 文章摘要，用于列表页展示
+  category: string        // 文章分类，对应 BLOG_CATEGORIES 中的值
+  tags: string[]          // 文章标签列表，支持多标签分类
+  author: string          // 作者昵称
+  authorTitle: string     // 作者职称/身份标签
+  avatar: string          // 作者头像（单字母简写）
+  avatarGrad: string      // 作者头像渐变色类名
+  createdAt: string       // 文章创建日期（YYYY-MM-DD 格式）
+  updatedAt: string       // 文章最后更新日期（YYYY-MM-DD 格式）
+  readTime: number        // 预计阅读时长（分钟）
+  views: number           // 文章浏览次数
+  likes: number           // 文章点赞数
+  coverGrad: string       // 文章封面渐变色类名，用于无图片时的占位背景
+  content: ContentBlock[] // 文章内容块数组，按顺序渲染构成完整文章
+  comments: BlogComment[] // 文章评论列表
 }
 
+/**
+ * 博客分类列表
+ * 定义所有可用的文章分类，用于筛选和导航
+ * "全部"为默认分类，显示所有文章
+ */
 export const BLOG_CATEGORIES = ['全部', 'AI 实践', '行业洞察', '工具技巧', '案例复盘', '产品思考']
 
+/**
+ * 博客文章 Mock 数据
+ * 包含 6 篇示例文章，覆盖不同分类和场景
+ * 每篇文章包含完整的内容块结构和评论数据
+ */
 export const BLOG_ARTICLES: BlogArticle[] = [
   {
     id: '1',

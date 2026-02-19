@@ -1,3 +1,8 @@
+/**
+ * 案例列表页
+ * 展示社区中用户发布的 AI 工作流复用案例
+ * 案例与博客不同：案例是可一键复用的 workflow，博客是文章内容
+ */
 'use client'
 
 import { useState } from 'react'
@@ -5,10 +10,20 @@ import Link from 'next/link'
 import { ALL_CASES } from './data'
 
 
+/** 行业分类筛选选项 */
 const INDUSTRIES = ['全部', '电商', '金融', '医疗', '法律', '教育', '互联网', '制造业', '零售']
+/** 排序选项 */
 const SORT_OPTIONS = ['最多复用', '最新发布', '最多点赞', '最多浏览']
 
+/**
+ * 一键复用弹窗组件
+ * 模拟将案例加载到小浣熊工作区的过程（三步进度动画）
+ *
+ * @param caseItem - 要复用的案例数据
+ * @param onClose - 关闭弹窗的回调函数
+ */
 function ReuseModal({ caseItem, onClose }: { caseItem: typeof ALL_CASES[0]; onClose: () => void }) {
+  /** 当前进度步骤（0=加载文件, 1=填充Prompt, 2=跳转执行页） */
   const [step, setStep] = useState(0)
   const steps = [
     { icon: '📂', title: '加载示例文件', desc: '正在自动加载案例示例文件...' },
@@ -87,12 +102,26 @@ function ReuseModal({ caseItem, onClose }: { caseItem: typeof ALL_CASES[0]; onCl
   )
 }
 
+/**
+ * 案例列表页组件
+ *
+ * 功能：
+ * - 按行业分类筛选案例
+ * - 关键词搜索（匹配标题或标签）
+ * - 多维度排序（复用数、发布时间、点赞数、浏览数）
+ * - 点击"一键复用"弹出 ReuseModal 进度弹窗
+ */
 export default function CasesPage() {
+  /** 当前选中的行业分类 */
   const [industry, setIndustry] = useState('全部')
+  /** 当前排序方式 */
   const [sort, setSort] = useState('最多复用')
+  /** 搜索关键词 */
   const [search, setSearch] = useState('')
+  /** 当前打开复用弹窗的案例（null 表示弹窗关闭） */
   const [selectedCase, setSelectedCase] = useState<typeof ALL_CASES[0] | null>(null)
 
+  // 应用行业筛选 + 关键词搜索 + 排序
   const filtered = ALL_CASES.filter((c) => {
     const matchIndustry = industry === '全部' || c.industry === industry
     const matchSearch = !search || c.title.includes(search) || c.tags.some((t) => t.includes(search))

@@ -1,11 +1,21 @@
+/**
+ * 博客列表页
+ * 展示社区中的文章内容，支持分类筛选、排序、搜索
+ * 提供右侧热门文章榜单和分类导航
+ */
 'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
 import { BLOG_ARTICLES, BLOG_CATEGORIES } from './data'
 
+/** 排序选项：按发布时间、浏览量、点赞数、讨论热度 */
 const SORT_OPTIONS = ['最新发布', '最多浏览', '最多点赞', '热门讨论']
 
+/**
+ * 博客分类对应的封面渐变色配置
+ * 用于文章卡片顶部的彩色条纹装饰
+ */
 const COVER_STYLES: Record<string, string> = {
   'AI 实践': 'from-amber-400 via-orange-400 to-red-500',
   '行业洞察': 'from-pink-400 via-rose-400 to-red-400',
@@ -14,11 +24,27 @@ const COVER_STYLES: Record<string, string> = {
   '产品思考': 'from-emerald-500 via-teal-500 to-cyan-600',
 }
 
+/**
+ * 博客列表页组件
+ *
+ * 状态管理：
+ * - activeCategory: 当前选中的分类（'全部' 或具体分类名）
+ * - sort: 排序方式
+ * - search: 搜索关键词（支持标题和摘要搜索）
+ *
+ * 数据处理：
+ * - filtered: 同时应用分类过滤 + 关键词搜索 + 排序的结果列表
+ * - topArticles: 按浏览量排序的 Top5 文章，用于侧边栏热门榜
+ */
 export default function BlogPage() {
+  /** 当前选中的文章分类 */
   const [activeCategory, setActiveCategory] = useState('全部')
+  /** 当前排序方式 */
   const [sort, setSort] = useState('最新发布')
+  /** 搜索关键词 */
   const [search, setSearch] = useState('')
 
+  // 过滤 + 排序：先按分类和关键词过滤，再按选定规则排序
   const filtered = BLOG_ARTICLES.filter((a) => {
     if (activeCategory !== '全部' && a.category !== activeCategory) return false
     if (search && !a.title.includes(search) && !a.excerpt.includes(search)) return false

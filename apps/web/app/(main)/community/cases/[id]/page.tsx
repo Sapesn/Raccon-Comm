@@ -1,8 +1,29 @@
+/**
+ * 成果案例详情页组件
+ *
+ * 功能概述:
+ * - 展示 AI 链路案例的详细信息（背景、工作流、输入输出、成果数据）
+ * - 支持一键复用链路（带步骤动画的模态框）
+ * - 提供点赞、收藏、评论互动功能
+ * - 展示相关案例推荐
+ *
+ * 数据结构:
+ * - CASES_DATA: 静态案例数据字典，以案例 id 为键
+ * - 每个案例包含：基本信息、工作流步骤、输入输出规格、成果指标、评论
+ */
 'use client'
 
 import { useState, use } from 'react'
 import Link from 'next/link'
 
+/**
+ * 案例数据静态存储
+ *
+ * 结构说明:
+ * 使用 Record<string, ...> 类型以 id 为键存储案例数据，
+ * 支持 O(1) 时间复杂度的快速查找。
+ * 实际生产环境中应替换为 API 请求。
+ */
 const CASES_DATA: Record<string, {
   id: string
   title: string
@@ -243,25 +264,65 @@ const CASES_DATA: Record<string, {
   },
 }
 
+/**
+ * 案例详情页主组件
+ *
+ * 页面布局:
+ * - 左侧主内容区（flex-1）：案例标题卡、背景、工作链路、输入输出、成果展示、评论
+ * - 右侧固定边栏（w-72）：复用 CTA 卡片（sticky）、案例统计、相关案例
+ *
+ * 状态管理:
+ * - liked / collected: 用户互动状态（布尔值切换）
+ * - showReuseModal: 控制一键复用模态框的显示/隐藏
+ * - reuseStep: 复用动画的当前步骤（0~3，使用 setTimeout 链驱动）
+ * - newComment: 评论输入框内容
+ * - likedComments: Set 集合存储已点赞的评论 ID
+ *
+ * @param params - Promise 类型的路由参数，需要用 React.use() 解包
+ */
 export default function CaseDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  // 使用 React.use() 解包 Promise 类型的路由参数（Next.js 15+ 规范）
   const { id } = use(params)
+  // 查找案例数据，找不到时降级到第一个案例
   const caseData = CASES_DATA[id] ?? CASES_DATA['1']
+
+  // ========== 互动状态管理 ==========
+  // 点赞和收藏状态
   const [liked, setLiked] = useState(false)
   const [collected, setCollected] = useState(false)
+
+  // ========== 复用模态框状态机 ==========
+  // showReuseModal: 控制模态框可见性
+  // reuseStep: 动画步骤索引（0=未开始, 1/2/3=各步骤进行中）
   const [showReuseModal, setShowReuseModal] = useState(false)
   const [reuseStep, setReuseStep] = useState(0)
+
+  // 评论输入状态
   const [newComment, setNewComment] = useState('')
+  // 使用 Set 存储已点赞的评论 ID，避免重复点赞
   const [likedComments, setLikedComments] = useState<Set<string>>(new Set())
 
+  /**
+   * 触发一键复用操作
+   *
+   * 复用动画状态机逻辑:
+   * 1. 显示模态框，重置步骤计数器到0
+   * 2. 通过多个 setTimeout 依次推进步骤（每步间隔900ms）
+   * 3. 每步对应一个操作：打开小浣熊 -> 加载示例 -> 进入执行页
+   * 4. 最终步骤完成后显示"前往执行"按钮
+   */
   const handleReuse = () => {
     setShowReuseModal(true)
     setReuseStep(0)
     const steps = [1, 2, 3]
+    // 链式 setTimeout 模拟异步操作进度
+    // 步骤 s 在 s * 900ms 后触发，实现顺序动画效果
     steps.forEach((s) => {
       setTimeout(() => setReuseStep(s), s * 900)
     })
   }
 
+  // 复用步骤定义：每步包含图标和文字说明
   const reuseSteps = [
     { icon: '📂', label: '自动打开小浣熊' },
     { icon: '✍️', label: '加载示例文件 & 填充 Prompt' },
@@ -271,10 +332,10 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
   return (
     <div className="container mx-auto px-4 py-6 max-w-7xl">
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* Main */}
+        {/* ===== 左侧主内容区 ===== */}
         <div className="flex-1 min-w-0">
 
-          {/* Breadcrumb */}
+          {/* 面包屑导航：社区首页 / 成果案例 / 当前案例标题 */}
           <div className="flex items-center gap-2 text-sm text-gray-400 mb-4 overflow-hidden">
             <Link href="/community" className="hover:text-blue-600 transition-colors">社区首页</Link>
             <span>/</span>
@@ -283,8 +344,9 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
             <span className="text-gray-600 truncate">{caseData.title}</span>
           </div>
 
-          {/* Title Card */}
+          {/* ===== 标题卡片 ===== */}
           <div className="bg-white rounded-2xl p-6 shadow-sm border mb-5">
+            {/* 标签行：行业分类、官方推荐标记、关键词标签 */}
             <div className="flex items-center gap-2 mb-3">
               <span className="text-sm bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full font-medium">{caseData.industry}</span>
               {caseData.isOfficial && (
@@ -297,7 +359,7 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
 
             <h1 className="text-2xl font-bold text-gray-900 mb-4">{caseData.title}</h1>
 
-            {/* Author Row */}
+            {/* 作者信息行 + 互动数据 */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${caseData.avatarBg} flex items-center justify-center text-white font-bold text-lg`}>
@@ -308,26 +370,31 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
                   <div className="text-xs text-gray-400">{caseData.authorTitle} · 发布于 {caseData.createdAt}</div>
                 </div>
               </div>
+              {/* 右侧互动按钮：浏览量（只读）、点赞、收藏、复用次数 */}
               <div className="flex items-center gap-4 text-sm text-gray-400">
                 <span>👁 {caseData.views}</span>
+                {/* 点赞：切换后立即反映在计数上 */}
                 <button
                   onClick={() => setLiked(!liked)}
                   className={`flex items-center gap-1 transition-colors ${liked ? 'text-red-500' : 'hover:text-red-400'}`}
                 >
                   ❤️ {caseData.likes + (liked ? 1 : 0)}
                 </button>
+                {/* 收藏：与点赞类似的乐观更新 */}
                 <button
                   onClick={() => setCollected(!collected)}
                   className={`flex items-center gap-1 transition-colors ${collected ? 'text-amber-500' : 'hover:text-amber-400'}`}
                 >
                   ⭐ {caseData.collects + (collected ? 1 : 0)}
                 </button>
+                {/* 复用次数：静态展示 */}
                 <span className="text-blue-500 font-medium">⚡ {caseData.reuses} 次复用</span>
               </div>
             </div>
           </div>
 
-          {/* 背景问题 */}
+          {/* ===== 背景问题 ===== */}
+          {/* 描述该案例解决的业务痛点和原始问题 */}
           <div className="bg-white rounded-2xl p-6 shadow-sm border mb-5">
             <h2 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
               <span className="w-7 h-7 bg-orange-100 rounded-lg flex items-center justify-center text-base">❓</span>
@@ -336,7 +403,7 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
             <p className="text-gray-700 leading-relaxed">{caseData.background}</p>
           </div>
 
-          {/* 使用链路 */}
+          {/* ===== 使用链路：带连接线的步骤流程图 ===== */}
           <div className="bg-white rounded-2xl p-6 shadow-sm border mb-5">
             <h2 className="text-lg font-bold text-gray-900 mb-5 flex items-center gap-2">
               <span className="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center text-base">⚡</span>
@@ -346,22 +413,24 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
             <div className="space-y-4">
               {caseData.workflow.map((step, i) => (
                 <div key={step.step} className="relative">
+                  {/* 步骤连接线：从第一步到倒数第二步绘制垂直连接线 */}
                   {i < caseData.workflow.length - 1 && (
                     <div className="absolute left-5 top-14 bottom-0 w-0.5 bg-gray-100 -mb-4" />
                   )}
                   <div className="flex gap-4">
-                    {/* Step Number */}
+                    {/* 步骤序号圆圈：蓝色背景，z-index 确保遮住连接线 */}
                     <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold z-10">
                       {step.step}
                     </div>
 
-                    {/* Content */}
+                    {/* 步骤内容卡片 */}
                     <div className="flex-1 bg-gray-50 rounded-xl p-4 border">
                       <div className="flex items-center gap-2 mb-2">
                         <span className="text-xl">{step.icon}</span>
                         <span className="font-semibold text-gray-900">{step.name}</span>
                       </div>
                       <p className="text-sm text-gray-600 mb-3">{step.desc}</p>
+                      {/* Prompt 示例：可选字段，展示具体的提示词 */}
                       {step.prompt && (
                         <div className="bg-white rounded-lg border border-dashed border-blue-200 p-3">
                           <div className="text-xs font-semibold text-blue-600 mb-1.5 flex items-center gap-1">
@@ -377,9 +446,9 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
             </div>
           </div>
 
-          {/* 输入 & 输出 */}
+          {/* ===== 输入 & 输出：左右并排卡片 ===== */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
-            {/* 输入 */}
+            {/* 输入规格：列出所有必需/可选的输入数据 */}
             <div className="bg-white rounded-2xl p-5 shadow-sm border">
               <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <span className="w-6 h-6 bg-green-100 rounded-lg flex items-center justify-center text-sm">📥</span>
@@ -398,7 +467,7 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
               </div>
             </div>
 
-            {/* 输出 */}
+            {/* 输出成果：展示链路产出的结果文件 */}
             <div className="bg-white rounded-2xl p-5 shadow-sm border">
               <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <span className="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center text-sm">📤</span>
@@ -418,7 +487,7 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
             </div>
           </div>
 
-          {/* 成果展示 */}
+          {/* ===== 成果展示：量化指标对比 ===== */}
           <div className="bg-white rounded-2xl p-6 shadow-sm border mb-5">
             <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
               <span className="w-7 h-7 bg-green-100 rounded-lg flex items-center justify-center text-base">📈</span>
@@ -426,12 +495,13 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
             </h2>
             <p className="text-gray-700 mb-5 leading-relaxed">{caseData.result}</p>
 
-            {/* Metrics Grid */}
+            {/* 指标网格：显示 before/after 对比，"-" 表示该项无对比基准 */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {caseData.resultMetrics.map((metric) => (
                 <div key={metric.label} className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100 text-center">
                   <div className="text-xs text-gray-500 mb-2">{metric.label}</div>
                   <div className="flex items-center justify-center gap-2 mb-1">
+                    {/* 若 before 值非"-"，显示带删除线的旧数值 */}
                     {metric.before !== '-' && (
                       <>
                         <span className="text-sm text-gray-400 line-through">{metric.before}</span>
@@ -448,7 +518,7 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
             </div>
           </div>
 
-          {/* 价值总结 */}
+          {/* ===== 价值总结：蓝紫渐变背景突出显示 ===== */}
           <div className="bg-gradient-to-r from-blue-50 to-violet-50 rounded-2xl p-6 border border-blue-100 mb-5">
             <h2 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
               <span className="w-7 h-7 bg-blue-100 rounded-lg flex items-center justify-center text-base">💡</span>
@@ -457,14 +527,15 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
             <p className="text-gray-700 leading-relaxed">{caseData.value}</p>
           </div>
 
-          {/* Comments */}
+          {/* ===== 评论区 ===== */}
           <div className="bg-white rounded-2xl p-6 shadow-sm border mb-5">
             <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
               <span>💬</span> 评论 ({caseData.comments.length})
             </h2>
 
-            {/* Comment Input */}
+            {/* 评论输入行：头像 + 输入框 + 发送按钮 */}
             <div className="flex gap-3 mb-5">
+              {/* 当前用户头像（占位） */}
               <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-violet-500 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
                 A
               </div>
@@ -476,6 +547,7 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
                   placeholder="写下你的想法或问题..."
                   className="flex-1 border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
                 />
+                {/* 发送后清空输入框（注意：当前仅清空，未真正提交到列表） */}
                 <button
                   onClick={() => setNewComment('')}
                   className="bg-blue-600 text-white px-4 py-2.5 rounded-xl text-sm hover:bg-blue-700 transition-colors flex-shrink-0"
@@ -485,7 +557,7 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
               </div>
             </div>
 
-            {/* Comment List */}
+            {/* 评论列表 */}
             <div className="space-y-4">
               {caseData.comments.map((comment) => (
                 <div key={comment.id} className="flex gap-3">
@@ -498,6 +570,7 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
                       <span className="text-xs text-gray-400">{comment.time}</span>
                     </div>
                     <p className="text-sm text-gray-700 bg-gray-50 rounded-xl p-3 mb-2">{comment.content}</p>
+                    {/* 评论点赞：使用 Set 进行 O(1) 的存在性检查和切换 */}
                     <button
                       onClick={() => {
                         const next = new Set(likedComments)
@@ -515,10 +588,10 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
           </div>
         </div>
 
-        {/* Sidebar */}
+        {/* ===== 右侧边栏（固定宽度） ===== */}
         <div className="w-full lg:w-72 lg:flex-shrink-0 space-y-4">
 
-          {/* CTA: Reuse */}
+          {/* === 一键复用 CTA 卡片（sticky 跟随页面滚动） === */}
           <div className="bg-white rounded-2xl p-5 shadow-sm border lg:sticky top-20">
             <div className="text-center mb-4">
               <div className="text-3xl mb-2">⚡</div>
@@ -526,6 +599,7 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
               <div className="text-xs text-gray-500">自动加载配置，直接开始执行</div>
             </div>
 
+            {/* 复用步骤预览列表 */}
             <div className="space-y-2 mb-4">
               {[
                 '自动打开小浣熊',
@@ -540,6 +614,7 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
               ))}
             </div>
 
+            {/* 主操作按钮：触发复用动画 */}
             <button
               onClick={handleReuse}
               className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors"
@@ -550,12 +625,13 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
               🔗 分享给他人
             </button>
 
+            {/* 已复用人数提示 */}
             <div className="mt-3 pt-3 border-t text-center text-xs text-gray-400">
               已有 <span className="text-blue-600 font-semibold">{caseData.reuses}</span> 人复用了此链路
             </div>
           </div>
 
-          {/* Case Stats */}
+          {/* === 案例统计数据面板 === */}
           <div className="bg-white rounded-xl p-4 shadow-sm border">
             <h3 className="font-semibold text-gray-900 mb-3">案例数据</h3>
             <div className="space-y-2 text-sm">
@@ -582,7 +658,7 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
             </div>
           </div>
 
-          {/* Related Cases */}
+          {/* === 相关案例推荐 === */}
           <div className="bg-white rounded-xl p-4 shadow-sm border">
             <h3 className="font-semibold text-gray-900 mb-3">相关案例</h3>
             <div className="space-y-2.5">
@@ -605,29 +681,47 @@ export default function CaseDetailPage({ params }: { params: Promise<{ id: strin
         </div>
       </div>
 
-      {/* Reuse Modal */}
+      {/* ========== 一键复用模态框 ========== */}
+      {/*
+        模态框状态机:
+        - 初始状态: reuseStep = 0（步骤未开始）
+        - 进行中: reuseStep = 1/2（对应步骤高亮 + 旋转加载图标）
+        - 完成: reuseStep >= reuseSteps.length（显示"前往执行"按钮）
+
+        视觉状态映射:
+        - i < reuseStep: 绿色（已完成）
+        - i === reuseStep: 蓝色（进行中）
+        - i > reuseStep: 灰色（待执行）
+      */}
       {showReuseModal && (
+        /* 点击背景遮罩关闭模态框 */
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center" onClick={() => { setShowReuseModal(false); setReuseStep(0) }}>
+          {/* e.stopPropagation() 防止点击内容区时触发背景关闭 */}
           <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-bold text-gray-900 mb-4 text-center">⚡ 一键复用中...</h3>
             <div className="space-y-3 mb-6">
               {reuseSteps.map((s, i) => (
                 <div key={i} className={`flex items-center gap-3 p-3 rounded-xl transition-all ${i < reuseStep ? 'bg-green-50 border border-green-100' : i === reuseStep ? 'bg-blue-50 border border-blue-200' : 'bg-gray-50 border border-transparent'}`}>
                   <div className={`w-9 h-9 rounded-full flex items-center justify-center text-xl flex-shrink-0 ${i < reuseStep ? 'bg-green-100' : i === reuseStep ? 'bg-blue-100' : 'bg-gray-100'}`}>
+                    {/* 已完成步骤显示绿色对勾，否则显示步骤图标 */}
                     {i < reuseStep ? '✅' : s.icon}
                   </div>
                   <span className={`text-sm font-medium ${i <= reuseStep ? 'text-gray-900' : 'text-gray-400'}`}>{s.label}</span>
+                  {/* 当前正在执行的步骤显示旋转加载动画 */}
                   {i === reuseStep && reuseStep < reuseSteps.length && (
                     <div className="ml-auto w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
                   )}
                 </div>
               ))}
             </div>
+            {/* 根据步骤状态显示不同的底部操作区 */}
             {reuseStep >= reuseSteps.length ? (
+              // 全部完成：显示跳转按钮
               <button onClick={() => { setShowReuseModal(false); setReuseStep(0) }} className="w-full bg-green-600 text-white py-3 rounded-xl font-semibold">
                 ✅ 已就绪，前往小浣熊执行
               </button>
             ) : (
+              // 进行中：显示等待提示
               <div className="text-center text-sm text-gray-400">正在自动配置，请稍候...</div>
             )}
           </div>

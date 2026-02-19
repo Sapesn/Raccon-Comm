@@ -1,14 +1,34 @@
+/**
+ * 社区讨论区列表页
+ * 采用"内容优先"的卡片布局：标题 → 内容预览 → 标签 → 作者/统计信息
+ * 内容预览会自动过滤 Markdown 语法，展示第一段纯文字
+ */
 'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
 import { POSTS } from './data'
 
+/** 讨论分类选项 */
 const CATEGORIES = ['全部', '经验分享', '行业讨论', '问题求助', '使用心得', '技术交流']
+/** 排序选项 */
 const SORT_OPTIONS = ['最新回复', '最新发布', '热门']
 
+/**
+ * 讨论区列表页组件
+ *
+ * 状态：
+ * - category: 当前选中分类
+ * - sort: 排序方式（最新回复/最新发布/热门）
+ *
+ * 过滤逻辑：
+ * - filtered: 按分类过滤后，再按排序规则排序
+ * - 内容预览通过正则剔除 Markdown 格式字符
+ */
 export default function DiscussPage() {
+  /** 当前选中的讨论分类 */
   const [category, setCategory] = useState('全部')
+  /** 当前排序方式 */
   const [sort, setSort] = useState('最新回复')
 
   const filtered = POSTS.filter((p) => category === '全部' || p.category === category).sort((a, b) => {

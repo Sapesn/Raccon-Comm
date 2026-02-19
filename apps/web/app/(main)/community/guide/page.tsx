@@ -1,9 +1,18 @@
+/**
+ * 社区使用指南页面
+ * 包含四个主要标签：模块指南、积分体系、身份认证、徽章系统
+ * 帮助新用户快速了解社区功能和成长路径
+ */
 'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
 import { IDENTITY_MAP, ROLE_META } from '../members/data'
 
+/**
+ * 社区核心模块配置
+ * 描述社区的 8 个主要功能板块及其特点
+ */
 const MODULES = [
   {
     id: 'cases',
@@ -119,6 +128,11 @@ const MODULES = [
   },
 ]
 
+/**
+ * 积分获取规则
+ * 四大类别：内容贡献、社区互动、产品共建、活动参与
+ * 每个类别有不同的图标和主题色，用于 UI 渲染时区分
+ */
 const POINT_RULES = [
   { category: '内容贡献', icon: '📝', color: 'blue', items: [
     { action: '发布案例', points: '+150', note: '经官方审核通过后发放' },
@@ -151,6 +165,11 @@ const POINT_RULES = [
   ]},
 ]
 
+/**
+ * 用户积分等级体系
+ * 6 个等级：幼崽 → 探索 → 知识 → 专家 → 大师 → 传说
+ * 每级有对应的积分区间、emoji、渐变色、文字色和 4 项专属权益
+ */
 const POINT_LEVELS = [
   {
     level: 'Lv.1', name: '浣熊幼崽', min: 0, max: 499, emoji: '🐾',
@@ -184,6 +203,7 @@ const POINT_LEVELS = [
   },
 ]
 
+/** 可获得的社区徽章列表（仅用于展示，实际badge数据在profile/page.tsx中维护） */
 const BADGES = [
   { icon: '🎖️', name: '早期用户', desc: '2023 年前注册' },
   { icon: '🏆', name: '月度之星', desc: '单月积分 Top 10' },
@@ -197,9 +217,22 @@ const BADGES = [
   { icon: '⭐', name: '官方认证', desc: '通过官方身份认证' },
 ]
 
+/** 指南页标签选项 */
 const TABS = ['模块指南', '积分体系', '身份认证', '徽章系统'] as const
 
+/**
+ * 社区使用指南页面组件
+ *
+ * 功能：
+ * 1. 模块指南：介绍8个社区核心功能板块（案例、知识库、讨论、反馈、荣誉、活动、用户、行业圈）
+ * 2. 积分体系：展示积分获取规则（4大类别）和等级权益（6级成长体系）
+ * 3. 身份认证：说明用户身份类型（VIP、优秀创作者等）和行业圈子角色（主理人、布道师）
+ * 4. 徽章系统：展示可获得的成就徽章及获取技巧
+ *
+ * @returns 指南页面组件
+ */
 export default function GuidePage() {
+  /** 当前激活的标签页 */
   const [activeTab, setActiveTab] = useState<typeof TABS[number]>('模块指南')
 
   return (

@@ -6,6 +6,11 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { UNREAD_COUNT } from './messages/data'
 
+/**
+ * 主导航标签配置
+ * - exact: true 表示需要精确匹配路径（仅用于首页）
+ * - 其他标签使用 startsWith 匹配，支持子路由高亮
+ */
 const mainTabs = [
   { href: '/community', label: '首页', exact: true },
   { href: '/community/cases', label: '案例' },
@@ -15,6 +20,10 @@ const mainTabs = [
   { href: '/community/raccoon', label: '🦝 浣熊园' },
 ]
 
+/**
+ * "更多"下拉菜单中的次级导航标签
+ * 包含用户榜单、社区活动、荣誉室等功能页面
+ */
 const moreTabs = [
   { href: '/community/members', label: '用户榜单', icon: '👥' },
   { href: '/community/events', label: '社区活动', icon: '🗓️' },
@@ -23,6 +32,10 @@ const moreTabs = [
   { href: '/community/guide', label: '使用指南', icon: '📖' },
 ]
 
+/**
+ * "发布"下拉菜单选项
+ * 用户可以选择发布案例或写博客
+ */
 const publishOptions = [
   {
     href: '/community/cases/publish',
@@ -38,28 +51,46 @@ const publishOptions = [
   },
 ]
 
+/**
+ * 个人头像下拉菜单选项
+ * 包含个人中心和我的小浣熊
+ */
 const profileMenu = [
   { href: '/community/profile', label: '个人中心', icon: '⚙️' },
   { href: '/community/raccoon', label: '我的小浣熊', icon: '🦝' },
 ]
 
+/**
+ * 社区布局组件
+ *
+ * 职责：
+ * - 提供统一的社区页面布局框架
+ * - 管理顶部导航栏（桌面端和移动端）
+ * - 处理多个下拉菜单的状态管理
+ * - 响应式设计，移动端显示汉堡菜单
+ *
+ * @param children - 子页面内容
+ */
 export default function CommunityLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [moreOpen, setMoreOpen] = useState(false)
-  const [profileOpen, setProfileOpen] = useState(false)
-  const [publishOpen, setPublishOpen] = useState(false)
 
+  // 状态管理：控制各种下拉菜单和移动端菜单的开关状态
+  const [menuOpen, setMenuOpen] = useState(false)      // 移动端汉堡菜单展开状态
+  const [moreOpen, setMoreOpen] = useState(false)      // 桌面端"更多"下拉菜单展开状态
+  const [profileOpen, setProfileOpen] = useState(false) // 桌面端个人头像下拉菜单展开状态
+  const [publishOpen, setPublishOpen] = useState(false) // "发布"下拉菜单展开状态
+
+  // 判断"更多"标签是否处于激活状态（当前路径是否在 moreTabs 中）
   const isMoreActive = moreTabs.some((t) => pathname.startsWith(t.href))
 
   return (
     <div className="min-h-screen bg-[#f5f7fa]">
-      {/* Top Nav */}
+      {/* 顶部导航栏 - 固定定位，始终显示在页面顶部 */}
       <header className="sticky top-0 z-30 bg-white border-b shadow-sm">
         <div className="container mx-auto px-4 flex items-center justify-between h-14 gap-4">
 
-          {/* Logo */}
+          {/* Logo 区域 - 移动端显示简化版本 */}
           <Link href="/community" className="flex items-center gap-2 flex-shrink-0">
             <span className="text-2xl">🦝</span>
             <span className="font-bold text-lg text-gray-900 hidden sm:block">小浣熊社区</span>
@@ -67,9 +98,11 @@ export default function CommunityLayout({ children }: { children: ReactNode }) {
             <span className="ml-1 text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full font-medium hidden sm:inline">BETA</span>
           </Link>
 
-          {/* Desktop Nav */}
+          {/* 桌面端导航栏 - 仅在 md 断点以上显示 */}
           <nav className="hidden md:flex items-center gap-0.5 flex-1 justify-center">
+            {/* 主导航标签循环渲染 */}
             {mainTabs.map((tab) => {
+              // 根据 exact 属性判断是否需要精确匹配路径
               const isActive = tab.exact ? pathname === tab.href : pathname.startsWith(tab.href)
               return (
                 <Link
@@ -84,20 +117,23 @@ export default function CommunityLayout({ children }: { children: ReactNode }) {
               )
             })}
 
-            {/* More Dropdown */}
+            {/* "更多"下拉菜单 - 包含次级导航选项 */}
             <div className="relative">
               <button
                 onClick={() => setMoreOpen(!moreOpen)}
+                // onBlur 延迟关闭，确保用户有时间点击下拉菜单项
                 onBlur={() => setTimeout(() => setMoreOpen(false), 150)}
                 className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1 ${
                   isMoreActive ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
                 }`}
               >
                 更多
+                {/* 箭头图标，根据菜单状态旋转 */}
                 <svg className={`w-3 h-3 transition-transform ${moreOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
+              {/* 下拉菜单面板 - 条件渲染 */}
               {moreOpen && (
                 <div className="absolute top-full left-0 mt-1.5 w-40 bg-white rounded-xl shadow-lg border py-1 z-50">
                   {moreTabs.map((tab) => {
@@ -120,9 +156,9 @@ export default function CommunityLayout({ children }: { children: ReactNode }) {
             </div>
           </nav>
 
-          {/* Desktop Right Actions */}
+          {/* 桌面端右侧操作区 - 包含站内信、搜索、发布、个人头像 */}
           <div className="hidden md:flex items-center gap-2 flex-shrink-0">
-            {/* Messages icon with unread badge */}
+            {/* 站内信图标 - 带未读消息徽章 */}
             <Link
               href="/community/messages"
               className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors"
@@ -131,12 +167,15 @@ export default function CommunityLayout({ children }: { children: ReactNode }) {
               <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
+              {/* 未读消息数量徽章 - 超过 9 条显示 9+ */}
               {UNREAD_COUNT > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">
                   {UNREAD_COUNT > 9 ? '9+' : UNREAD_COUNT}
                 </span>
               )}
             </Link>
+
+            {/* 搜索框 - 响应式宽度 */}
             <div className="relative">
               <input
                 type="text"
@@ -148,7 +187,7 @@ export default function CommunityLayout({ children }: { children: ReactNode }) {
               </svg>
             </div>
 
-            {/* Publish Dropdown */}
+            {/* "发布"下拉菜单 - 提供发布案例和写博客两个选项 */}
             <div className="relative">
               <button
                 onClick={() => setPublishOpen(!publishOpen)}
@@ -160,6 +199,7 @@ export default function CommunityLayout({ children }: { children: ReactNode }) {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
+              {/* 发布选项面板 - 包含图标、标题和描述 */}
               {publishOpen && (
                 <div className="absolute top-full right-0 mt-1.5 w-52 bg-white rounded-xl shadow-lg border py-1.5 z-50">
                   {publishOptions.map((opt) => (
@@ -179,7 +219,7 @@ export default function CommunityLayout({ children }: { children: ReactNode }) {
               )}
             </div>
 
-            {/* Profile avatar dropdown */}
+            {/* 个人头像下拉菜单 */}
             <div className="relative">
               <button
                 onClick={() => setProfileOpen(!profileOpen)}
@@ -188,8 +228,10 @@ export default function CommunityLayout({ children }: { children: ReactNode }) {
               >
                 A
               </button>
+              {/* 个人信息和快捷菜单 */}
               {profileOpen && (
                 <div className="absolute top-full right-0 mt-1.5 w-44 bg-white rounded-xl shadow-lg border py-1 z-50">
+                  {/* 用户信息头部 - 显示昵称、等级和积分 */}
                   <div className="px-4 py-2 border-b">
                     <p className="text-sm font-semibold text-gray-900">小浣熊用户</p>
                     <p className="text-xs text-gray-400">Lv.5 大师 · 12,400 积分</p>
@@ -209,8 +251,9 @@ export default function CommunityLayout({ children }: { children: ReactNode }) {
             </div>
           </div>
 
-          {/* Mobile Right Actions */}
+          {/* 移动端右侧操作区 - 仅包含发布按钮和汉堡菜单 */}
           <div className="flex md:hidden items-center gap-2">
+            {/* 发布按钮 - 移动端简化版 */}
             <div className="relative">
               <button
                 onClick={() => setPublishOpen(!publishOpen)}
@@ -237,11 +280,14 @@ export default function CommunityLayout({ children }: { children: ReactNode }) {
                 </div>
               )}
             </div>
+
+            {/* 汉堡菜单按钮 - 切换移动端导航菜单 */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
               aria-label="菜单"
             >
+              {/* 根据菜单状态切换图标：展开时显示关闭图标，收起时显示菜单图标 */}
               {menuOpen ? (
                 <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -255,26 +301,29 @@ export default function CommunityLayout({ children }: { children: ReactNode }) {
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* 移动端菜单面板 - 全屏展开，包含所有导航选项 */}
         {menuOpen && (
           <div className="md:hidden border-t bg-white">
             <nav className="container mx-auto px-4 py-3 space-y-0.5">
+              {/* 合并主导航、站内信、次级导航和个人中心为统一菜单 */}
               {[
                 ...mainTabs,
                 { href: '/community/messages', label: '站内信', icon: '📬' },
                 ...moreTabs,
                 { href: '/community/profile', label: '个人中心', icon: '⚙️' }
               ].map((tab) => {
+                // 使用类型守卫判断是否有 exact 属性
                 const isActive = 'exact' in tab && tab.exact ? pathname === tab.href : pathname.startsWith(tab.href)
                 return (
                   <Link
                     key={tab.href}
                     href={tab.href}
-                    onClick={() => setMenuOpen(false)}
+                    onClick={() => setMenuOpen(false)} // 点击后自动关闭菜单
                     className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                       isActive ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100'
                     }`}
                   >
+                    {/* 仅显示有 icon 属性的图标 */}
                     {'icon' in tab ? <span>{tab.icon}</span> : null}
                     {tab.label}
                   </Link>
@@ -285,6 +334,7 @@ export default function CommunityLayout({ children }: { children: ReactNode }) {
         )}
       </header>
 
+      {/* 主内容区域 - 渲染子页面 */}
       <main>{children}</main>
     </div>
   )

@@ -1,17 +1,33 @@
+/**
+ * 小浣熊等级系统与个性化数据
+ *
+ * 包含用户成长等级体系、小浣熊个性化角色、场景背景等数据
+ * 用于实现社区的游戏化激励机制和个性化展示
+ */
+
+/**
+ * 小浣熊等级结构
+ * 定义用户在社区的成长等级及对应的视觉效果和能力标签
+ */
 export interface RaccoonLevel {
-  level: number
-  name: string
-  form: string
-  minPoints: number
-  maxPoints: number | null
-  emoji: string
-  accessory: string
-  aura: string
-  ring: string
-  desc: string
-  ability: string
+  level: number           // 等级编号（1-6）
+  name: string            // 等级名称（Lv.1、Lv.2 等）
+  form: string            // 等级形态名称（如"浣熊幼崽"、"探索小浣熊"）
+  minPoints: number       // 该等级所需最低积分
+  maxPoints: number | null // 该等级上限积分，最高级为 null 表示无上限
+  emoji: string           // 等级对应的 Emoji 图标
+  accessory: string       // 等级装饰品 Emoji（如🔍、📚、🎓等），体现等级特征
+  aura: string            // 等级光环渐变色类名，用于背景效果
+  ring: string            // 等级边框颜色类名，用于头像边框
+  desc: string            // 等级描述文案，展现该等级用户的特点
+  ability: string         // 等级能力标签，概括该等级的核心能力
 }
 
+/**
+ * 小浣熊等级配置列表
+ * 从 Lv.1 到 Lv.6 共 6 个等级，积分越高等级越高
+ * 通过不同的视觉效果（光环、装饰品、边框）区分等级
+ */
 export const RACCOON_LEVELS: RaccoonLevel[] = [
   {
     level: 1,
@@ -93,17 +109,35 @@ export const RACCOON_LEVELS: RaccoonLevel[] = [
   },
 ]
 
+/**
+ * 根据积分获取对应的小浣熊等级
+ * 从最高等级开始反向查找，找到第一个积分满足条件的等级
+ * 若积分低于所有等级要求（不可能发生），默认返回 Lv.1
+ *
+ * @param points - 用户当前积分
+ * @returns 对应的等级配置对象
+ */
 export function getRaccoonLevel(points: number): RaccoonLevel {
   return [...RACCOON_LEVELS].reverse().find((l) => points >= l.minPoints) ?? RACCOON_LEVELS[0]
 }
 
+/**
+ * 小浣熊个性化角色结构
+ * 每个用户的小浣熊宠物都有独立的名字、心情和口头禅
+ * 体现了社区的个性化与趣味性，增强用户归属感
+ */
 export interface RaccoonPersonality {
-  name: string
-  mood: string
-  catchphrase: string
-  imageUrl?: string  // AI generated raccoon image
+  name: string       // 小浣熊的名字，由系统或用户自定义
+  mood: string       // 当前心情 Emoji，展示小浣熊的状态
+  catchphrase: string // 小浣熊的口头禅，体现角色个性
+  imageUrl?: string  // AI 生成的小浣熊形象图片 URL（可选）
 }
 
+/**
+ * 用户小浣熊个性化数据映射
+ * key 为用户 ID，value 为对应的小浣熊角色数据
+ * 每个社区成员都有专属的小浣熊名字和口头禅，体现不同的职业背景和性格
+ */
 export const RACCOON_DATA: Record<string, RaccoonPersonality> = {
   '1':  { name: '橙子',   mood: '🎯', catchphrase: '用 AI 征服每一个大促！' },
   '2':  { name: '提示词', mood: '💡', catchphrase: 'Prompt 就是一切～' },
@@ -119,6 +153,16 @@ export const RACCOON_DATA: Record<string, RaccoonPersonality> = {
   '12': { name: '产品熊', mood: '🎯', catchphrase: '用户需求第一位！' },
 }
 
+/**
+ * 场景背景配置列表
+ * 用户可以为自己的小浣熊选择不同的展示场景
+ *
+ * 字段说明：
+ * - id: 场景唯一标识
+ * - label: 场景显示名称（含 Emoji）
+ * - bg: 场景天空背景渐变色类名
+ * - ground: 场景地面颜色类名
+ */
 export const SCENES = [
   { id: 'forest', label: '🌲 竹林小院', bg: 'from-green-50 via-emerald-50 to-teal-50', ground: 'bg-green-100' },
   { id: 'sunset', label: '🌅 落日草原', bg: 'from-amber-50 via-orange-50 to-rose-50', ground: 'bg-amber-100' },

@@ -1,3 +1,36 @@
+/**
+ * 知识库数据模型与 Mock 数据
+ *
+ * 包含社区共享的知识库资源
+ * 知识库是文档集合，配合 AI 使用可快速检索和引用领域知识
+ * 支持多行业场景，包括客服、法律、产品、财务、电商、医疗、研发、营销等
+ */
+
+/**
+ * 知识库列表 Mock 数据
+ * 包含 8 个跨行业的知识库，涵盖不同业务场景的文档资源
+ *
+ * 字段说明：
+ * - id: 知识库唯一标识
+ * - title: 知识库名称
+ * - industry: 所属行业分类（通用、法律、互联网、金融、电商、医疗等）
+ * - tags: 知识库标签列表，用于多维度分类和检索
+ * - author: 知识库贡献者昵称
+ * - avatar: 贡献者头像（单字母简写或 Emoji）
+ * - docCount: 知识库包含的文档数量
+ * - fileTypes: 知识库支持的文件类型（Word、PDF、Excel、Markdown 等）
+ * - saves: 知识库被转存次数，反映受欢迎程度
+ * - views: 知识库浏览次数
+ * - likes: 知识库点赞数
+ * - createdAt: 知识库创建时间（相对时间格式）
+ * - updatedAt: 知识库最后更新时间（相对时间格式）
+ * - isOfficial: 是否为官方知识库，影响展示权重
+ * - desc: 知识库详细描述，说明包含的内容和使用场景
+ * - preview: 知识库文档预览列表，展示部分文档名称
+ * - usagePattern: 使用示例，展示如何在小浣熊中引用该知识库
+ * - linkedChains: 关联的 AI 工作流链路列表，展示知识库的应用场景
+ * - pawSteps: PAW 三步法应用示例（Plan 计划、Analyze 分析、Write 输出）
+ */
 export const ALL_KBS = [
   {
     id: '1',
@@ -225,4 +258,9 @@ export const ALL_KBS = [
   },
 ]
 
+/**
+ * 知识库类型定义
+ * 通过 TypeScript 类型推导从数组元素自动生成类型
+ * 确保类型安全和代码提示
+ */
 export type KB = typeof ALL_KBS[0]
