@@ -66,12 +66,7 @@ export default function LoginPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">密码</Label>
-                <Link
-                  href="/forgot-password"
-                  className="text-sm text-primary hover:underline"
-                >
-                  忘记密码？
-                </Link>
+                <span className="text-sm text-muted-foreground">忘记密码（即将上线）</span>
               </div>
               <Input
                 id="password"

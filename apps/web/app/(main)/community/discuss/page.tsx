@@ -14,6 +14,23 @@ const CATEGORIES = ['全部', '经验分享', '行业讨论', '问题求助', '�
 /** 排序选项 */
 const SORT_OPTIONS = ['最新回复', '最新发布', '热门']
 
+const parseRelativeTime = (value: string): number => {
+  if (value === '刚刚') return Date.now()
+
+  const m = value.match(/^(\d+)(分钟|小时|天)前$/)
+  if (!m) return 0
+
+  const amount = Number(m[1])
+  const unit = m[2]
+  const minute = 60 * 1000
+  const hour = 60 * minute
+  const day = 24 * hour
+
+  if (unit === '分钟') return Date.now() - amount * minute
+  if (unit === '小时') return Date.now() - amount * hour
+  return Date.now() - amount * day
+}
+
 /**
  * 讨论区列表页组件
  *
@@ -32,9 +49,9 @@ export default function DiscussPage() {
   const [sort, setSort] = useState('最新回复')
 
   const filtered = POSTS.filter((p) => category === '全部' || p.category === category).sort((a, b) => {
-    if (sort === '最新回复') return new Date(b.lastReply).getTime() - new Date(a.lastReply).getTime()
+    if (sort === '最新回复') return parseRelativeTime(b.lastReply) - parseRelativeTime(a.lastReply)
     if (sort === '热门') return b.views - a.views
-    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    return parseRelativeTime(b.createdAt) - parseRelativeTime(a.createdAt)
   })
 
   return (

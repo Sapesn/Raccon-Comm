@@ -18,7 +18,6 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
 import { POSTS, REPLIES } from '../data'
 
 /**
@@ -40,9 +39,24 @@ export default function DiscussDetailPage({ params }: { params: { id: string } }
   // 根据 URL 参数查找帖子
   const post = POSTS.find((p) => p.id === params.id)
 
-  // 帖子不存在时触发 404
+  // 客户端组件中不调用 notFound，直接渲染兜底状态
   if (!post) {
-    notFound()
+    return (
+      <div className="min-h-[calc(100vh-56px)] bg-[#f5f7fa]">
+        <div className="container mx-auto px-4 py-10 max-w-3xl">
+          <div className="bg-white rounded-2xl border p-8 text-center">
+            <h1 className="text-xl font-bold text-gray-900 mb-2">帖子不存在或已删除</h1>
+            <p className="text-sm text-gray-500 mb-6">请返回讨论区查看其他内容。</p>
+            <Link
+              href="/community/discuss"
+              className="inline-block text-sm text-blue-600 bg-blue-50 border border-blue-100 rounded-xl px-4 py-2 hover:bg-blue-100 transition-colors"
+            >
+              返回讨论列表
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   // 筛选属于当前帖子的所有回复

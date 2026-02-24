@@ -2,8 +2,11 @@ import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
 import * as schema from './schema'
 
-const connectionString =
-  process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:5432/raccoon_kb'
+const connectionString = process.env.DATABASE_URL
+
+if (!connectionString) {
+  throw new Error('DATABASE_URL is required for @raccoon-kb/db')
+}
 
 // 用于查询 - 配置连接池
 const queryClient = postgres(connectionString, {
